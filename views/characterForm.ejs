@@ -1,0 +1,15 @@
+<h1><%= character ? 'Edit' : 'Create' %> Character</h1>
+<form action="<%= character ? `/characters/${character._id}?_method=PUT` : '/characters' %>" method="POST">
+  <label>Name</label>
+  <input type="text" name="name" value="<%= character ? character.name : '' %>" required>
+  
+  <label>Universe</label>
+  <input type="text" name="universe" value="<%= character ? character.universe : '' %>" required>
+  
+  <label>Strength</label>
+  <input type="number" name="stats[strength]" value="<%= character ? character.stats.strength : '' %>" required>
+  
+  <!-- Add fields for other stats -->
+
+  <button type="submit"><%= character ? 'Update' : 'Create' %></button>
+</form>

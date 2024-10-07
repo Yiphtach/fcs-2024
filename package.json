@@ -1,16 +1,19 @@
 {
   "dependencies": {
+    "axios": "^1.7.7",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.21.0",
     "method-override": "^3.0.0",
     "mongoose": "^8.7.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
+    "three": "^0.169.0",
+    "three-gltf-loader": "^1.111.0"
   },
   "name": "fcs-2024",
   "version": "1.0.0",
   "main": "app.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

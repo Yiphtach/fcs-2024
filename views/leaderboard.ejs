@@ -1,0 +1,9 @@
+<h1>Leaderboard</h1>
+<ul>
+  <% characters.forEach((character, index) => { %>
+    <li>
+      <h3>Rank <%= index + 1 %>: <%= character.name %></h3>
+      <p>Wins: <%= character.wins %>, Losses: <%= character.losses %>, Win Ratio: <%= (character.wins / character.totalFights * 100).toFixed(2) %>%</p>
+    </li>
+  <% }) %>
+</ul>

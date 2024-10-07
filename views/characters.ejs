@@ -1,0 +1,15 @@
+<h1>Character List</h1>
+<ul>
+  <% characters.forEach(character => { %>
+    <li>
+      <h3><%= character.name %> (Universe: <%= character.universe %>)</h3>
+      <p>Strength: <%= character.stats.strength %>, Speed: <%= character.stats.speed %></p>
+      <p>Wins: <%= character.wins %>, Losses: <%= character.losses %>, Total Fights: <%= character.totalFights %></p>
+      <a href="/characters/<%= character._id %>/edit">Edit</a> | 
+      <form action="/characters/<%= character._id %>?_method=DELETE" method="POST">
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+  <% }) %>
+</ul>
+<a href="/characters/new">Create New Character</a>

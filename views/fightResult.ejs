@@ -1,0 +1,51 @@
+<h1>Fight Result</h1>
+<p><strong><%= char1.name %></strong> vs. <strong><%= char2.name %></strong></p>
+
+<div class="health-bars">
+  <div>
+    <strong><%= char1.name %></strong>: <progress value="100" max="100" id="char1-health"></progress>
+  </div>
+  <div>
+    <strong><%= char2.name %></strong>: <progress value="100" max="100" id="char2-health"></progress>
+  </div>
+</div>
+
+<ul id="fight-log">
+  <% fightResult.log.forEach((log) => { %>
+    <li><%= log %></li>
+  <% }) %>
+</ul>
+
+<a href="/fights">Simulate Another Fight</a>
+
+<script>
+  let char1Health = 100;
+  let char2Health = 100;
+
+  // Simulate health bar update
+  const fightLog = <%- JSON.stringify(fightResult.log) %>;
+  const fightLogElement = document.getElementById('fight-log');
+
+  fightLog.forEach((log, index) => {
+    setTimeout(() => {
+      fightLogElement.children[index].scrollIntoView({ behavior: 'smooth' });
+
+      // Example of updating health bars (you'd dynamically calculate health)
+      if (log.includes(char1.name)) {
+        char2Health -= 10;  // This should be dynamic based on the real damage
+        document.getElementById('char2-health').value = char2Health;
+      } else if (log.includes(char2.name)) {
+        char1Health -= 10;
+        document.getElementById('char1-health').value = char1Health;
+      }
+    }, 1000 * index);
+  });
+</script>
+
+<style>
+  .health-bars {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+</style>
