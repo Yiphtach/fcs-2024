@@ -1,6 +1,7 @@
 <h1>Fight Result</h1>
 <p><strong><%= char1.name %></strong> vs. <strong><%= char2.name %></strong></p>
 
+<!-- Display health bars for both characters -->
 <div class="health-bars">
   <div>
     <strong><%= char1.name %></strong>: <progress value="100" max="100" id="char1-health"></progress>
@@ -10,6 +11,7 @@
   </div>
 </div>
 
+<!-- Fight log displaying round-by-round breakdown -->
 <ul id="fight-log">
   <% fightResult.log.forEach((log) => { %>
     <li><%= log %></li>
@@ -18,11 +20,12 @@
 
 <a href="/fights">Simulate Another Fight</a>
 
+<!-- JavaScript for real-time health bar and log updates -->
 <script>
   let char1Health = 100;
   let char2Health = 100;
 
-  // Simulate health bar update
+  // Simulate health bar update using the fight log
   const fightLog = <%- JSON.stringify(fightResult.log) %>;
   const fightLogElement = document.getElementById('fight-log');
 
@@ -30,22 +33,35 @@
     setTimeout(() => {
       fightLogElement.children[index].scrollIntoView({ behavior: 'smooth' });
 
-      // Example of updating health bars (you'd dynamically calculate health)
-      if (log.includes(char1.name)) {
-        char2Health -= 10;  // This should be dynamic based on the real damage
+      // Dynamically calculate health bar updates based on the fight log
+      if (log.includes('<%= char1.name %> attacks')) {
+        // Decrease character 2's health when character 1 attacks
+        char2Health -= extractDamage(log);
         document.getElementById('char2-health').value = char2Health;
-      } else if (log.includes(char2.name)) {
-        char1Health -= 10;
+      } else if (log.includes('<%= char2.name %> attacks')) {
+        // Decrease character 1's health when character 2 attacks
+        char1Health -= extractDamage(log);
         document.getElementById('char1-health').value = char1Health;
       }
-    }, 1000 * index);
+    }, 1000 * index);  // Time delay for each log entry
   });
+
+  // Helper function to extract damage from the log entry
+  function extractDamage(log) {
+    const damageMatch = log.match(/causing (\d+) damage/);  // Assuming log format includes "causing X damage"
+    return damageMatch ? parseInt(damageMatch[1], 10) : 0;
+  }
 </script>
 
+<!-- Basic styling for health bars and layout -->
 <style>
   .health-bars {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
+  }
+  progress {
+    width: 100px;
+    height: 20px;
   }
 </style>
