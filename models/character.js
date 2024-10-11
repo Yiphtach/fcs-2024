@@ -10,7 +10,7 @@ const CharacterSchema = new mongoose.Schema({
   universe: {
     type: String,
     required: [true, 'Universe is required'],
-    enum: ['DC', 'Marvel', 'Other'],  // Limit universe to predefined options
+    enum: ['DC', 'Marvel', 'Other', 'Marvel Comics', 'DC Comics'],  // Added valid universe options
     default: 'Other'
   },
   stats: {

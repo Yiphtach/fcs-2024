@@ -22,9 +22,23 @@ async function fetchAndStoreCharacter(characterId) {
     const response = await axios.get(`https://superheroapi.com/api/${process.env.SUPERHERO_API_KEY}/${characterId}`);
     const data = response.data;
 
+    // Validate and format the character data before saving
+    const universe = ['Marvel Comics', 'DC Comics'].includes(data.biography.publisher) 
+      ? data.biography.publisher 
+      : 'Other';
+
+    const abilities = data.work.occupation 
+      ? data.work.occupation.split(', ').map(ability => ({
+          name: ability, 
+          type: 'Utility',  // Default type for abilities (you can enhance based on data)
+          powerLevel: Math.floor(Math.random() * 100),  // Random power level for simplicity
+          description: ability 
+        }))
+      : [{ name: 'Unknown', type: 'Utility', powerLevel: 0, description: 'No description available' }];
+
     const character = new Character({
       name: data.name,
-      universe: data.biography.publisher || 'Unknown',
+      universe: universe,
       stats: {
         strength: data.powerstats.strength || 0,
         speed: data.powerstats.speed || 0,
@@ -33,11 +47,12 @@ async function fetchAndStoreCharacter(characterId) {
         combat: data.powerstats.combat || 0,
         intelligence: data.powerstats.intelligence || 0,
       },
-      abilities: data.work.occupation ? data.work.occupation.split(', ') : ['Unknown'],
-      imageUrl: data.image.url || '',
-      comicBookAppearances: data.appearance ? data.appearance.total : 0,
+      abilities: abilities,
+      imageUrl: data.image.url || 'https://example.com/default-image.jpg',  // Default image if not provided
+      totalFights: data.appearance ? data.appearance.total : 0,
     });
 
+    // Save the character data to the database
     await character.save();
     console.log(`Saved character: ${character.name}`);
   } catch (error) {
