@@ -4,9 +4,9 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
 
-export function runFightAnimation(winner, loser) {
+export function runFightAnimation(winner, loser, moveType) {
   const clock = new THREE.Clock();  // For handling animation updates
-  let mixer;  // Animation mixer for managing animations
+  let winnerMixer, loserMixer;  // Animation mixers for managing animations
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -15,6 +15,15 @@ export function runFightAnimation(winner, loser) {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  });
 
   // Add lights
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -40,52 +49,51 @@ export function runFightAnimation(winner, loser) {
 
   // Load models and animations using GLTFLoader
   const loader = new GLTFLoader();
-  
+
+  // Load the winner's model and play animation
   loader.load('/animations/assets/winnerModel.glb', (gltf) => {
     const winnerModel = gltf.scene;
     winnerModel.position.set(-1, 0, 0);
     winnerModel.scale.set(0.5, 0.5, 0.5);
     scene.add(winnerModel);
-
-    // Add model to outline pass
     outlinePass.selectedObjects.push(winnerModel);
 
-    // Add animations for the winner
-    mixer = new THREE.AnimationMixer(winnerModel);
-    const punchClip = THREE.AnimationClip.findByName(gltf.animations, 'punch');  // Assume the model has a "punch" animation
-    const punchAction = mixer.clipAction(punchClip);
-    punchAction.play();  // Play punch animation
+    winnerMixer = new THREE.AnimationMixer(winnerModel);
+    const punchClip = THREE.AnimationClip.findByName(gltf.animations, 'punch');
+    const punchAction = winnerMixer.clipAction(punchClip);
+    punchAction.play();
+
+  }, undefined, (error) => {
+    console.error('Error loading winner model:', error);
   });
 
+  // Load the loser's model and play animation
   loader.load('/animations/assets/loserModel.glb', (gltf) => {
     const loserModel = gltf.scene;
     loserModel.position.set(1, 0, 0);
     loserModel.scale.set(0.5, 0.5, 0.5);
     scene.add(loserModel);
-
-    // Add model to outline pass
     outlinePass.selectedObjects.push(loserModel);
 
-    // Add animations for the loser
-    const loserMixer = new THREE.AnimationMixer(loserModel);
-    const dodgeClip = THREE.AnimationClip.findByName(gltf.animations, 'dodge');  // Assume the model has a "dodge" animation
+    loserMixer = new THREE.AnimationMixer(loserModel);
+    const dodgeClip = THREE.AnimationClip.findByName(gltf.animations, 'dodge');
     const dodgeAction = loserMixer.clipAction(dodgeClip);
-    dodgeAction.play();  // Play dodge animation
+    dodgeAction.play();
+
+  }, undefined, (error) => {
+    console.error('Error loading loser model:', error);
   });
 
-
-function playAttackAnimation(attackerModel, moveType) {
+  // Function to play specific attack animation based on move type
+  function playAttackAnimation(attackerModel, moveType) {
     if (moveType === 'Critical Hit') {
-      // Trigger a special attack animation, e.g., a powerful punch
-      const criticalHitAction = mixer.clipAction(THREE.AnimationClip.findByName(attackerModel.animations, 'powerPunch'));
+      const criticalHitAction = winnerMixer.clipAction(THREE.AnimationClip.findByName(attackerModel.animations, 'powerPunch'));
       criticalHitAction.play();
     } else {
-      // Normal attack animation
-      const normalAttackAction = mixer.clipAction(THREE.AnimationClip.findByName(attackerModel.animations, 'punch'));
+      const normalAttackAction = winnerMixer.clipAction(THREE.AnimationClip.findByName(attackerModel.animations, 'punch'));
       normalAttackAction.play();
     }
   }
-  
 
   // Animation loop
   function animate() {
@@ -93,9 +101,8 @@ function playAttackAnimation(attackerModel, moveType) {
 
     const delta = clock.getDelta();  // Update the clock
 
-    if (mixer) {
-      mixer.update(delta);  // Update the animation mixer
-    }
+    if (winnerMixer) winnerMixer.update(delta);
+    if (loserMixer) loserMixer.update(delta);
 
     composer.render();  // Use composer for post-processing
   }

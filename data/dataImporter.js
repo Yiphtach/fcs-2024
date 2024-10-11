@@ -1,4 +1,3 @@
-// data/dataImporter.js
 const axios = require('axios');
 const mongoose = require('mongoose');
 const Character = require('../models/character');
@@ -25,32 +24,41 @@ async function fetchAndStoreCharacter(characterId) {
 
     const character = new Character({
       name: data.name,
-      universe: data.biography.publisher,
+      universe: data.biography.publisher || 'Unknown',
       stats: {
-        strength: data.powerstats.strength,
-        speed: data.powerstats.speed,
-        durability: data.powerstats.durability,
-        power: data.powerstats.power,
-        combat: data.powerstats.combat,
-        intelligence: data.powerstats.intelligence,
+        strength: data.powerstats.strength || 0,
+        speed: data.powerstats.speed || 0,
+        durability: data.powerstats.durability || 0,
+        power: data.powerstats.power || 0,
+        combat: data.powerstats.combat || 0,
+        intelligence: data.powerstats.intelligence || 0,
       },
-      abilities: data.work.occupation.split(', '),
-      imageUrl: data.image.url,
-      comicBookAppearances: data.appearance.total,
+      abilities: data.work.occupation ? data.work.occupation.split(', ') : ['Unknown'],
+      imageUrl: data.image.url || '',
+      comicBookAppearances: data.appearance ? data.appearance.total : 0,
     });
 
     await character.save();
     console.log(`Saved character: ${character.name}`);
   } catch (error) {
-    console.error(`Error fetching character: ${error.message}`);
+    console.error(`Error fetching character with ID ${characterId}: ${error.message}`);
   }
 }
 
 // Fetch and save multiple characters
 async function fetchMultipleCharacters() {
   const characterIds = [1, 2, 3, 4, 5]; // Add more IDs as needed
-  for (let id of characterIds) {
-    await fetchAndStoreCharacter(id);
+
+  try {
+    // Fetch all characters in parallel using Promise.all()
+    const fetchPromises = characterIds.map(id => fetchAndStoreCharacter(id));
+    await Promise.all(fetchPromises);  // Wait for all fetches to complete
+    console.log('All characters fetched and saved successfully.');
+  } catch (error) {
+    console.error('Error fetching multiple characters:', error.message);
+  } finally {
+    mongoose.connection.close();  // Gracefully close the MongoDB connection after the operation
+    console.log('MongoDB connection closed.');
   }
 }
 

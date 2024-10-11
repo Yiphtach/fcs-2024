@@ -1,15 +1,24 @@
 const express = require('express');
 const router = express.Router();
 
-// Home page route
+// Home Page Route
 router.get('/', (req, res) => {
-    res.render('index');  // Render the 'index.ejs' view
+    try {
+        res.render('index', { title: 'Home' });  // Render the home page with dynamic title
+    } catch (error) {
+        console.error('Error rendering home page:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-// You can add more routes here as needed
-// For example, if you want to add an about page
+// About Page Route
 router.get('/about', (req, res) => {
-    res.render('about');  // Render the 'about.ejs' view
+    try {
+        res.render('about', { title: 'About' });  // Render the about page with dynamic title
+    } catch (error) {
+        console.error('Error rendering about page:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;

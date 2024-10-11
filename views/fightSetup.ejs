@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fight Details</title>
+    <link rel="stylesheet" href="/styles/main.css"> <!-- Assume you have a main stylesheet for consistency -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .fight-log {
+            list-style-type: none;
+            padding: 0;
+        }
+        .fight-log li {
+            background-color: #f2f2f2;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        .fight-winner {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            margin-top: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        .fight-details {
+            margin-top: 20px;
+        }
+        .health-bars {
+            display: flex;
+            justify-content: space-between;
+        }
+        .health-bar {
+            width: 45%;
+            background-color: #ddd;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .health-bar-inner {
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 5px;
+        }
+        @media (max-width: 600px) {
+            .health-bars {
+                flex-direction: column;
+            }
+            .health-bar {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Fight Details</h1>
+    
+    <!-- Show the characters involved -->
+    <div class="fight-details">
+        <h2><%= char1.name %> vs. <%= char2.name %></h2>
+        <p>Universe: <%= char1.universe %> vs. <%= char2.universe %></p>
+
+        <!-- Dynamic Health Bars for each character -->
+        <div class="health-bars">
+            <div class="health-bar">
+                <strong><%= char1.name %></strong>
+                <div class="health-bar-inner" style="width: <%= char1Health %>%"></div>
+                <p>Health: <%= char1Health %>/100</p>
+            </div>
+            <div class="health-bar">
+                <strong><%= char2.name %></strong>
+                <div class="health-bar-inner" style="width: <%= char2Health %>%"></div>
+                <p>Health: <%= char2Health %>/100</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Display the round-by-round breakdown of the fight -->
+    <h2>Round Breakdown</h2>
+    <ul class="fight-log">
+        <% fightResult.log.forEach(log => { %>
+            <li><%= log %></li>
+        <% }) %>
+    </ul>
+
+    <!-- Show the fight winner -->
+    <div class="fight-winner">
+        <h2>Winner: <%= fightResult.winner %></h2>
+    </div>
+
+    <!-- Option to simulate another fight -->
+    <a href="/fights" class="simulate-again">Simulate Another Fight</a>
+
+    <script>
+        // Example for future dynamic health bar updates (optional)
+        let char1Health = <%= char1Health %>;
+        let char2Health = <%= char2Health %>;
+        document.querySelector(".health-bar-inner").style.width = `${char1Health}%`;
+        // Additional JS logic for health bar dynamic updates during the fight (if needed)
+    </script>
+</body>
+</html>

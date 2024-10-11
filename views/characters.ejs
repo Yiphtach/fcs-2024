@@ -1,15 +1,52 @@
-<h1>Character List</h1>
-<ul>
-  <% characters.forEach(character => { %>
-    <li>
-      <h3><%= character.name %> (Universe: <%= character.universe %>)</h3>
-      <p>Strength: <%= character.stats.strength %>, Speed: <%= character.stats.speed %></p>
-      <p>Wins: <%= character.wins %>, Losses: <%= character.losses %>, Total Fights: <%= character.totalFights %></p>
-      <a href="/characters/<%= character._id %>/edit">Edit</a> | 
-      <form action="/characters/<%= character._id %>?_method=DELETE" method="POST">
-        <button type="submit">Delete</button>
-      </form>
-    </li>
-  <% }) %>
-</ul>
-<a href="/characters/new">Create New Character</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/header') %>  <!-- Include the header partial -->
+    <title>Character List</title>
+</head>
+<body>
+    <h1>Character List</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Universe</th>
+                <th>Strength</th>
+                <th>Speed</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Total Fights</th>
+                <th>Win Ratio</th>
+                <th>Loss Ratio</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% characters.forEach(character => { %>
+                <tr>
+                    <td><%= character.name %></td>
+                    <td><%= character.universe %></td>
+                    <td><%= character.stats.strength %></td>
+                    <td><%= character.stats.speed %></td>
+                    <td><%= character.wins %></td>
+                    <td><%= character.losses %></td>
+                    <td><%= character.totalFights %></td>
+                    <td><%= character.winRatio %></td>  <!-- Display win ratio virtual field -->
+                    <td><%= character.lossRatio %></td> <!-- Display loss ratio virtual field -->
+                    <td>
+                        <a href="/characters/<%= character._id %>/edit">Edit</a> | 
+                        <form action="/characters/<%= character._id %>?_method=DELETE" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this character?');">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <a href="/characters/new" class="btn">Create New Character</a>
+
+    <%- include('./partials/footer') %>  <!-- Include the footer partial -->
+</body>
+</html>

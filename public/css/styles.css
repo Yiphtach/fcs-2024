@@ -1,0 +1,81 @@
+/* Header Styles */
+header {
+    background-color: #333;
+    padding: 10px 0;
+    position: sticky;  /* Keep the header at the top when scrolling */
+    top: 0;
+    width: 100%;
+    z-index: 100;  /* Ensure header stays above other content */
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;  /* Vertically center items */
+    margin: 0;
+    padding: 0;
+}
+
+header nav ul li {
+    display: inline-block;  /* More flexible than 'inline' */
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    transition: background-color 0.3s, color 0.3s;  /* Smooth transitions for hover */
+    border-radius: 4px;
+}
+
+header nav ul li a:hover {
+    background-color: #444;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    /* Styles for mobile devices */
+    header nav ul {
+        flex-direction: column;  /* Stack menu items vertically on smaller screens */
+    }
+
+    header nav ul li {
+        margin: 10px 0;
+    }
+}
+
+.burger {
+    display: none;  /* Hide on large screens */
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 24px;
+}
+
+.burger div {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 4px 0;
+    transition: 0.3s;
+}
+
+@media (max-width: 768px) {
+    .burger {
+        display: flex;  /* Show burger on smaller screens */
+    }
+
+    header nav ul {
+        display: none;  /* Hide the nav links initially on mobile */
+        flex-direction: column;
+    }
+
+    .nav-active {
+        display: flex;  /* Show nav links when burger is clicked */
+    }
+}
+
+header {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Soft shadow for better depth */
+}

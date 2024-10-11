@@ -1,9 +1,82 @@
-<h1>Leaderboard</h1>
-<ul>
-  <% characters.forEach((character, index) => { %>
-    <li>
-      <h3>Rank <%= index + 1 %>: <%= character.name %></h3>
-      <p>Wins: <%= character.wins %>, Losses: <%= character.losses %>, Win Ratio: <%= (character.wins / character.totalFights * 100).toFixed(2) %>%</p>
-    </li>
-  <% }) %>
-</ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/header') %>  <!-- Include the header partial -->
+    <title>Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #fff;
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            th {
+                text-align: left;
+            }
+            tbody tr {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    
+    <!-- Leaderboard Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Total Fights</th>
+                <th>Win Ratio</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% characters.forEach((character, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= character.name %></td>
+                    <td><%= character.wins %></td>
+                    <td><%= character.losses %></td>
+                    <td><%= character.totalFights %></td>
+                    <td><%= (character.wins / character.totalFights * 100).toFixed(2) %> %</td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <%- include('partials/footer') %>  <!-- Include the footer partial -->
+</body>
+</html>

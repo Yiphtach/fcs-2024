@@ -1,15 +1,114 @@
-<h1><%= character ? 'Edit' : 'Create' %> Character</h1>
-<form action="<%= character ? `/characters/${character._id}?_method=PUT` : '/characters' %>" method="POST">
-  <label>Name</label>
-  <input type="text" name="name" value="<%= character ? character.name : '' %>" required>
-  
-  <label>Universe</label>
-  <input type="text" name="universe" value="<%= character ? character.universe : '' %>" required>
-  
-  <label>Strength</label>
-  <input type="number" name="stats[strength]" value="<%= character ? character.stats.strength : '' %>" required>
-  
-  <!-- Add fields for other stats -->
+<%- include('partials/header') %> <!-- Include the header partial -->
 
-  <button type="submit"><%= character ? 'Update' : 'Create' %></button>
-</form>
+<main>
+    <h1><%= character ? 'Edit' : 'Create' %> Character</h1>
+
+    <!-- Character Form -->
+    <form action="<%= character ? `/characters/${character._id}?_method=PUT` : '/characters' %>" method="POST" class="character-form">
+        <!-- Character Name -->
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" value="<%= character ? character.name : '' %>" required placeholder="Enter character name">
+
+        <!-- Universe -->
+        <label for="universe">Universe</label>
+        <select id="universe" name="universe" required>
+            <option value="">Select Universe</option>
+            <option value="Marvel" <%= character && character.universe === 'Marvel' ? 'selected' : '' %>>Marvel</option>
+            <option value="DC" <%= character && character.universe === 'DC' ? 'selected' : '' %>>DC</option>
+            <option value="Other" <%= character && character.universe === 'Other' ? 'selected' : '' %>>Other</option>
+        </select>
+
+        <!-- Stats -->
+        <label for="strength">Strength</label>
+        <input type="number" id="strength" name="stats[strength]" value="<%= character ? character.stats.strength : '' %>" min="0" max="100" required placeholder="Enter strength (0-100)">
+
+        <label for="speed">Speed</label>
+        <input type="number" id="speed" name="stats[speed]" value="<%= character ? character.stats.speed : '' %>" min="0" max="100" required placeholder="Enter speed (0-100)">
+
+        <label for="durability">Durability</label>
+        <input type="number" id="durability" name="stats[durability]" value="<%= character ? character.stats.durability : '' %>" min="0" max="100" required placeholder="Enter durability (0-100)">
+
+        <label for="power">Power</label>
+        <input type="number" id="power" name="stats[power]" value="<%= character ? character.stats.power : '' %>" min="0" max="100" required placeholder="Enter power (0-100)">
+
+        <label for="combat">Combat</label>
+        <input type="number" id="combat" name="stats[combat]" value="<%= character ? character.stats.combat : '' %>" min="0" max="100" required placeholder="Enter combat (0-100)">
+
+        <label for="intelligence">Intelligence</label>
+        <input type="number" id="intelligence" name="stats[intelligence]" value="<%= character ? character.stats.intelligence : '' %>" min="0" max="100" required placeholder="Enter intelligence (0-100)">
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit"><%= character ? 'Update' : 'Create' %> Character</button>
+    </form>
+</main>
+
+<%- include('partials/footer') %> <!-- Include the footer partial -->
+
+<!-- CSS Styles -->
+<style>
+    main {
+        padding: 20px;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .character-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .character-form label {
+        margin-top: 10px;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .character-form input,
+    .character-form select {
+        padding: 10px;
+        font-size: 16px;
+        width: 100%;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .character-form input[type="number"] {
+        max-width: 120px;
+    }
+
+    .btn-submit {
+        margin-top: 20px;
+        padding: 15px 30px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background-color: #45a049;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .character-form {
+            width: 90%;
+        }
+
+        .btn-submit {
+            width: 100%;
+        }
+    }
+</style>

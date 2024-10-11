@@ -1,67 +1,138 @@
-<h1>Fight Result</h1>
-<p><strong><%= char1.name %></strong> vs. <strong><%= char2.name %></strong></p>
+<%- include('partials/header') %>  <!-- Include the header partial -->
 
-<!-- Display health bars for both characters -->
-<div class="health-bars">
-  <div>
-    <strong><%= char1.name %></strong>: <progress value="100" max="100" id="char1-health"></progress>
-  </div>
-  <div>
-    <strong><%= char2.name %></strong>: <progress value="100" max="100" id="char2-health"></progress>
-  </div>
-</div>
+<main>
+    <!-- Fight Result Section -->
+    <section class="fight-result">
+        <h1>Fight Result</h1>
+        <p><strong><%= char1.name %></strong> vs. <strong><%= char2.name %></strong></p>
 
-<!-- Fight log displaying round-by-round breakdown -->
-<ul id="fight-log">
-  <% fightResult.log.forEach((log) => { %>
-    <li><%= log %></li>
-  <% }) %>
-</ul>
+        <!-- Health Bars for Both Characters -->
+        <div class="health-bars">
+            <div>
+                <strong><%= char1.name %></strong>: 
+                <progress value="<%= char1Health %>" max="100" id="char1-health"></progress>
+                <span id="char1-health-text"><%= char1Health %></span>/100
+            </div>
+            <div>
+                <strong><%= char2.name %></strong>: 
+                <progress value="<%= char2Health %>" max="100" id="char2-health"></progress>
+                <span id="char2-health-text"><%= char2Health %></span>/100
+            </div>
+        </div>
 
-<a href="/fights">Simulate Another Fight</a>
+        <!-- Fight Log: Round-by-Round Breakdown -->
+        <ul id="fight-log">
+            <% fightResult.log.forEach((log) => { %>
+                <li><%= log %></li>
+            <% }) %>
+        </ul>
 
-<!-- JavaScript for real-time health bar and log updates -->
+        <button onclick="location.href='/fights'" class="btn-fight-again">Simulate Another Fight</button>
+    </section>
+</main>
+
+<%- include('partials/footer') %>  <!-- Include the footer partial -->
+
+<!-- JavaScript for Real-Time Health Bar and Fight Log Updates -->
 <script>
-  let char1Health = 100;
-  let char2Health = 100;
+    let char1Health = <%= char1Health %>;
+    let char2Health = <%= char2Health %>;
 
-  // Simulate health bar update using the fight log
-  const fightLog = <%- JSON.stringify(fightResult.log) %>;
-  const fightLogElement = document.getElementById('fight-log');
+    // Simulate health bar updates
+    const fightLog = <%- JSON.stringify(fightResult.log) %>;
+    const fightLogElement = document.getElementById('fight-log');
 
-  fightLog.forEach((log, index) => {
-    setTimeout(() => {
-      fightLogElement.children[index].scrollIntoView({ behavior: 'smooth' });
+    fightLog.forEach((log, index) => {
+        setTimeout(() => {
+            fightLogElement.children[index].scrollIntoView({ behavior: 'smooth' });
 
-      // Dynamically calculate health bar updates based on the fight log
-      if (log.includes('<%= char1.name %> attacks')) {
-        // Decrease character 2's health when character 1 attacks
-        char2Health -= extractDamage(log);
-        document.getElementById('char2-health').value = char2Health;
-      } else if (log.includes('<%= char2.name %> attacks')) {
-        // Decrease character 1's health when character 2 attacks
-        char1Health -= extractDamage(log);
-        document.getElementById('char1-health').value = char1Health;
-      }
-    }, 1000 * index);  // Time delay for each log entry
-  });
+            // Dynamically update health bars based on the fight log
+            if (log.includes('<%= char1.name %> attacks')) {
+                char2Health -= extractDamage(log);
+                document.getElementById('char2-health').value = char2Health;
+                document.getElementById('char2-health-text').innerText = char2Health;
+            } else if (log.includes('<%= char2.name %> attacks')) {
+                char1Health -= extractDamage(log);
+                document.getElementById('char1-health').value = char1Health;
+                document.getElementById('char1-health-text').innerText = char1Health;
+            }
+        }, 1000 * index);
+    });
 
-  // Helper function to extract damage from the log entry
-  function extractDamage(log) {
-    const damageMatch = log.match(/causing (\d+) damage/);  // Assuming log format includes "causing X damage"
-    return damageMatch ? parseInt(damageMatch[1], 10) : 0;
-  }
+    // Helper function to extract damage from the fight log
+    function extractDamage(log) {
+        const damageMatch = log.match(/causing (\d+) damage/);
+        return damageMatch ? parseInt(damageMatch[1], 10) : 0;
+    }
 </script>
 
-<!-- Basic styling for health bars and layout -->
+<!-- CSS Styles -->
 <style>
-  .health-bars {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-  }
-  progress {
-    width: 100px;
-    height: 20px;
-  }
+    main {
+        padding: 20px;
+    }
+
+    /* Fight Result Section */
+    .fight-result {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .fight-result h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+    .fight-result p {
+        font-size: 18px;
+        margin-bottom: 30px;
+    }
+
+    /* Health Bars */
+    .health-bars {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+    }
+    progress {
+        width: 100px;
+        height: 20px;
+    }
+
+    /* Fight Log */
+    #fight-log {
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 30px;
+    }
+    #fight-log li {
+        background-color: #f4f4f4;
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+    }
+
+    /* Button */
+    .btn-fight-again {
+        padding: 15px 25px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        border: none;
+    }
+    .btn-fight-again:hover {
+        background-color: #45a049;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .health-bars {
+            flex-direction: column;
+            align-items: center;
+        }
+        progress {
+            width: 80%;
+        }
+    }
 </style>
