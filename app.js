@@ -8,7 +8,7 @@ const cron = require('node-cron');
 const app = express();
 const dataImporter = require('./data/dataImporter'); // Import the data importer script
 
-dotenv.config();
+require('dotenv').config();
 
 // Set the port from environment variable or default to 3000
 const port = process.env.PORT || 3000;

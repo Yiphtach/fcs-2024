@@ -2,79 +2,114 @@ const axios = require('axios');
 const mongoose = require('mongoose');
 const Character = require('../models/character');
 require('dotenv').config();
+const fs = require('fs'); // For logging errors
 
 // Connecting MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log(`Connected to MongoDB ${mongoose.connection.name}.`))
+  .then(() => console.log(`Connected to MongoDB ${mongoose.connection.name}`))
   .catch(err => console.log(`Connection error: ${err}`));
 
-// MongoDB Connection Event Handlers
-mongoose.connection.on("connected", () => {
-  console.log(`Connected to MongoDB database ${mongoose.connection.name}.`);
-});
-mongoose.connection.on("error", (err) => {
-  console.log(`MongoDB connection error: ${err}`);
-});
+// Logging error to a file
+function logError(errorMessage) {
+  const timestamp = new Date().toISOString();
+  fs.appendFileSync('error.log', `${timestamp} - ${errorMessage}\n`, 'utf8');
+}
 
-// Function to fetch and save character data
-async function fetchAndStoreCharacter(characterId) {
-  try {
-    const response = await axios.get(`https://superheroapi.com/api/${process.env.SUPERHERO_API_KEY}/${characterId}`);
-    const data = response.data;
+// Helper function to add delay between API requests
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-    // Validate and format the character data before saving
-    const universe = ['Marvel Comics', 'DC Comics'].includes(data.biography.publisher) 
-      ? data.biography.publisher 
-      : 'Other';
+// Function to process abilities and handle both string and object types
+function processAbilities(abilitiesData) {
+  if (!abilitiesData) return ['Unknown'];
 
-    const abilities = data.work.occupation 
-      ? data.work.occupation.split(', ').map(ability => ({
-          name: ability, 
-          type: 'Utility',  // Default type for abilities (you can enhance based on data)
-          powerLevel: Math.floor(Math.random() * 100),  // Random power level for simplicity
-          description: ability 
-        }))
-      : [{ name: 'Unknown', type: 'Utility', powerLevel: 0, description: 'No description available' }];
+  return abilitiesData.split(', ').map(ability => {
+    // If it's a string, return it as is or process as object
+    return typeof ability === 'string'
+      ? {
+          name: ability,
+          type: 'Utility',  // Default type
+          powerLevel: 50,   // Default power level (this could be adjusted)
+          description: `Ability related to ${ability}`
+        }
+      : ability; // If it's already an object, return it as is
+  });
+}
 
-    const character = new Character({
-      name: data.name,
-      universe: universe,
-      stats: {
-        strength: data.powerstats.strength || 0,
-        speed: data.powerstats.speed || 0,
-        durability: data.powerstats.durability || 0,
-        power: data.powerstats.power || 0,
-        combat: data.powerstats.combat || 0,
-        intelligence: data.powerstats.intelligence || 0,
-      },
-      abilities: abilities,
-      imageUrl: data.image.url || 'https://example.com/default-image.jpg',  // Default image if not provided
-      totalFights: data.appearance ? data.appearance.total : 0,
-    });
+// Function to fetch and save character data with retry logic and delay
+async function fetchAndSaveCharacter(characterId) {
+  const maxRetries = 3; // Set maximum retry attempts
+  let attempt = 0;
+  
+  while (attempt < maxRetries) {
+    try {
+      // Make request to SuperHero API
+      const response = await axios.get(`https://superheroapi.com/api/${process.env.SUPERHERO_API_KEY}/${characterId}`);
+      const data = response.data;
 
-    // Save the character data to the database
-    await character.save();
-    console.log(`Saved character: ${character.name}`);
-  } catch (error) {
-    console.error(`Error fetching character with ID ${characterId}: ${error.message}`);
+      // Check if the API response was successful
+      if (response.status !== 200 || !data) {
+        throw new Error(`Unexpected response status: ${response.status}`);
+      }
+
+      // Process abilities to fit the model schema
+      const abilities = processAbilities(data.work.occupation);
+
+      // Prepare character data to store in MongoDB
+      const character = new Character({
+        name: data.name,
+        universe: data.biography.publisher || 'Unknown',
+        stats: {
+          strength: data.powerstats.strength || 0,
+          speed: data.powerstats.speed || 0,
+          durability: data.powerstats.durability || 0,
+          power: data.powerstats.power || 0,
+          combat: data.powerstats.combat || 0,
+          intelligence: data.powerstats.intelligence || 0,
+        },
+        abilities,  // Pass processed abilities
+        imageUrl: data.image.url || '',
+        comicBookAppearances: data.appearance ? data.appearance.total : 0,
+      });
+
+      // Save character to MongoDB
+      await character.save();
+      console.log(`Saved character: ${character.name}`);
+
+      return;  // Exit the function if the request was successful
+
+    } catch (error) {
+      attempt++;
+      const errorMessage = `Error fetching character with ID ${characterId}: ${error.message} (Attempt ${attempt}/${maxRetries})`;
+
+      // Log the error message to both the console and an error log file
+      console.error(errorMessage);
+      logError(errorMessage);
+
+      // If max retries reached, log and skip this character
+      if (attempt >= maxRetries) {
+        console.error(`Failed to fetch character with ID ${characterId} after ${maxRetries} attempts.`);
+        return;
+      }
+
+      // Wait for 2 seconds before retrying (rate limiting)
+      await delay(2000);
+    }
   }
 }
 
-// Fetch and save multiple characters
+// Fetch multiple characters with delays to avoid rate limiting
 async function fetchMultipleCharacters() {
   const characterIds = [1, 2, 3, 4, 5]; // Add more IDs as needed
 
-  try {
-    // Fetch all characters in parallel using Promise.all()
-    const fetchPromises = characterIds.map(id => fetchAndStoreCharacter(id));
-    await Promise.all(fetchPromises);  // Wait for all fetches to complete
-    console.log('All characters fetched and saved successfully.');
-  } catch (error) {
-    console.error('Error fetching multiple characters:', error.message);
-  } finally {
-    mongoose.connection.close();  // Gracefully close the MongoDB connection after the operation
-    console.log('MongoDB connection closed.');
+  for (let i = 0; i < characterIds.length; i++) {
+    await fetchAndSaveCharacter(characterIds[i]);  // Wait for each character to be fetched
+    await delay(1000);  // Add 1-second delay between each request
   }
+
+  console.log('All characters fetched and saved successfully.');
+  mongoose.connection.close();  // Close MongoDB connection after fetching
 }
 
 // Execute the data fetching

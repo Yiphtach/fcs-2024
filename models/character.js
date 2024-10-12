@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 // Define character schema
-const CharacterSchema = new mongoose.Schema({
+const CharacterSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Character name is required'],
@@ -10,7 +11,16 @@ const CharacterSchema = new mongoose.Schema({
   universe: {
     type: String,
     required: [true, 'Universe is required'],
-    enum: ['DC', 'Marvel', 'Other', 'Marvel Comics', 'DC Comics'],  // Added valid universe options
+    enum: [
+      'DC', 
+      'Marvel', 
+      'Dark Horse Comics', 
+      'Image Comics', 
+      'Valiant Comics', 
+      'Other', 
+      'Marvel Comics', 
+      'DC Comics'
+    ],  // Expanded valid universe options
     default: 'Other'
   },
   stats: {
@@ -51,12 +61,10 @@ const CharacterSchema = new mongoose.Schema({
       max: [100, 'Intelligence cannot exceed 100']
     }
   },
-  abilities: [{
-    name: { type: String, required: true },
-    type: { type: String, enum: ['Offensive', 'Defensive', 'Utility'], default: 'Utility' },
-    powerLevel: { type: Number, min: 0, max: 100, required: true },
-    description: { type: String }
-  }],
+  abilities: {
+    type: [Schema.Types.Mixed],  // Allows both strings and objects in the abilities field
+    default: []
+  },
   imageUrl: {
     type: String,
     default: 'https://example.com/default-image.jpg'  // Placeholder image URL
@@ -90,6 +98,15 @@ CharacterSchema.virtual('lossRatio').get(function () {
   return (this.losses / this.totalFights).toFixed(2);
 });
 
+// Virtual property: average power level of abilities
+CharacterSchema.virtual('averageAbilityPower').get(function () {
+  if (!this.abilities.length) return 0;
+  const totalPower = this.abilities.reduce((total, ability) => {
+    return typeof ability === 'object' ? total + ability.powerLevel : total;  // Ensure only object abilities contribute
+  }, 0);
+  return (totalPower / this.abilities.length).toFixed(2);
+});
+
 // Middleware to automatically update the last fight date
 CharacterSchema.methods.updateLastFightDate = async function () {
   this.lastFightDate = new Date();
@@ -100,4 +117,5 @@ CharacterSchema.methods.updateLastFightDate = async function () {
 CharacterSchema.set('toJSON', { virtuals: true });
 CharacterSchema.set('toObject', { virtuals: true });
 
+// Model and Export
 module.exports = mongoose.model('Character', CharacterSchema);
