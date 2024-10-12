@@ -41,7 +41,7 @@ exports.simulateFight = async (req, res) => {
     await updateCharacterStats(fightResult.winner, fightResult.loser);
 
     // Log the fight history
-    await logFightHistory(fightResult.winner, fightResult.loser, fightResult.log);
+    await logFightHistory(fightResult.winner, fightResult.loser, fightResult.log, fightResult.stats);
 
     res.render('fightResult', { title: 'Fight Result', char1, char2, fightResult });
   } catch (error) {
@@ -57,30 +57,45 @@ function dynamicFightSimulation(char1, char2) {
   const fightLog = [];
   let round = 1;
 
+  // Track fight stats for logging purposes
+  const fightStats = {
+    totalRounds: 0,
+    winnerDamageDealt: 0,
+    loserDamageDealt: 0,
+    winnerSpecialMoveUsed: '',
+    loserSpecialMoveUsed: '',
+    winnerLuckFactor: 1,
+    loserLuckFactor: 1,
+  };
+
   while (char1Health > 0 && char2Health > 0) {
     const char1Attack = calculateAttack(char1, char2);
     const char2Attack = calculateAttack(char2, char1);
 
     char2Health -= char1Attack.damage;
     fightLog.push(`Round ${round}: ${char1.name} attacks with ${char1Attack.move}, causing ${char1Attack.damage} damage.`);
+    fightStats.winnerDamageDealt += char1Attack.damage;
 
     if (char2Health <= 0) {
       fightLog.push(`${char2.name} is defeated!`);
-      return { winner: char1, loser: char2, log: fightLog };
+      fightStats.totalRounds = round;
+      return { winner: char1, loser: char2, log: fightLog, stats: fightStats };
     }
 
     char1Health -= char2Attack.damage;
     fightLog.push(`Round ${round}: ${char2.name} counters with ${char2Attack.move}, causing ${char2Attack.damage} damage.`);
+    fightStats.loserDamageDealt += char2Attack.damage;
 
     if (char1Health <= 0) {
       fightLog.push(`${char1.name} is defeated!`);
-      return { winner: char2, loser: char1, log: fightLog };
+      fightStats.totalRounds = round;
+      return { winner: char2, loser: char1, log: fightLog, stats: fightStats };
     }
 
     round++;
   }
 
-  return { result: 'It\'s a tie!', log: fightLog };
+  return { result: 'It\'s a tie!', log: fightLog, stats: fightStats };
 }
 
 // Calculate attack damage with balancing (luck and special abilities)

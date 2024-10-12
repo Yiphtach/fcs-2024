@@ -73,12 +73,12 @@
         <div class="health-bars">
             <div class="health-bar">
                 <strong><%= char1.name %></strong>
-                <div class="health-bar-inner" style="width: <%= char1Health %>%"></div>
+                <div class="health-bar-inner" id="char1-health-bar" style="width: <%= char1Health %>%"></div>
                 <p>Health: <%= char1Health %>/100</p>
             </div>
             <div class="health-bar">
                 <strong><%= char2.name %></strong>
-                <div class="health-bar-inner" style="width: <%= char2Health %>%"></div>
+                <div class="health-bar-inner" id="char2-health-bar" style="width: <%= char2Health %>%"></div>
                 <p>Health: <%= char2Health %>/100</p>
             </div>
         </div>
@@ -101,11 +101,24 @@
     <a href="/fights" class="simulate-again">Simulate Another Fight</a>
 
     <script>
-        // Example for future dynamic health bar updates (optional)
-        let char1Health = <%= char1Health %>;
-        let char2Health = <%= char2Health %>;
-        document.querySelector(".health-bar-inner").style.width = `${char1Health}%`;
-        // Additional JS logic for health bar dynamic updates during the fight (if needed)
+
+        // Function to update health bars dynamically during the fight
+        function updateHealthBars() {
+            document.getElementById('char1-health-bar').style.width = `${char1Health}%`;
+            document.getElementById('char2-health-bar').style.width = `${char2Health}%`;
+        }
+
+        // Example logic for updating health bars during the fight (you can replace this with real data)
+        function simulateFightRound(damageToChar1, damageToChar2) {
+            char1Health = Math.max(char1Health - damageToChar1, 0);  // Ensure health doesn't go below 0
+            char2Health = Math.max(char2Health - damageToChar2, 0);  // Ensure health doesn't go below 0
+            updateHealthBars();  // Update the health bars after each round
+        }
+
+        // Example simulation of a fight round (replace with real-time updates during the fight)
+        setTimeout(() => {
+            simulateFightRound(20, 15);  // Simulating damage to both characters
+        }, 2000);  // Simulate after 2 seconds (for example)
     </script>
 </body>
 </html>
