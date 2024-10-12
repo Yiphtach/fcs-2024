@@ -10,8 +10,8 @@ const validateFightInput = (req, res, next) => {
     if (!char1Id || !char2Id) {
         return res.status(400).send('Bad Request: Both character IDs are required.');
     }
-    
-    const isValidObjectId = /^[0-9a-fA-F]{24}$/;
+
+    const isValidObjectId = /^[0-9a-fA-F]{24}$/;  // Basic regex to check for valid MongoDB ObjectId
     if (!char1Id.match(isValidObjectId) || !char2Id.match(isValidObjectId)) {
         return res.status(400).send('Invalid Character ID(s)');
     }
@@ -19,7 +19,13 @@ const validateFightInput = (req, res, next) => {
     next();
 };
 
-// GET: Show fight setup page
+// Route to display universe selection page
+router.get('/setup', fightController.showFightSetup);
+
+// Route to display character selection page based on chosen universe
+router.get('/selectCharacter', fightController.showCharacterSelection);
+
+// GET: Show the initial fight setup page
 router.get('/', (req, res) => {
     try {
         fightController.showFightSetup(req, res);
@@ -29,7 +35,7 @@ router.get('/', (req, res) => {
     }
 });
 
-// POST: Simulate fight
+// POST: Simulate fight after characters are selected
 router.post('/simulate', validateFightInput, (req, res) => {
     try {
         fightController.simulateFight(req, res);

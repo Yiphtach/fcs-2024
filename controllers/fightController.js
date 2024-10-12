@@ -4,8 +4,20 @@ const Fight = require('../models/fight');  // Assuming you've created a Fight mo
 // Display fight setup form
 exports.showFightSetup = async (req, res) => {
   try {
-    const characters = await Character.find({}, 'name universe stats');  // Fetch only necessary fields
-    res.render('fights', { title: 'Simulate a Fight', characters });
+    const universes = ['Marvel', 'DC', 'Other'];  // Universes to choose from
+    res.render('fightSetup', { universes, title: 'Choose Your Universe' });
+  } catch (error) {
+    console.error('Error fetching universes:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Show character selection after universe selection
+exports.showCharacterSelection = async (req, res) => {
+  try {
+    const { universe } = req.query;  // Get the selected universe from the query string
+    const characters = await Character.find({ universe });  // Fetch characters from the selected universe
+    res.render('characterSelection', { characters, universe, title: 'Choose Your Character' });
   } catch (error) {
     console.error('Error fetching characters:', error);
     res.status(500).send('Internal Server Error');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fight Details</title>
+    <title>Choose Your Universe</title>
     <link rel="stylesheet" href="/styles/main.css"> <!-- Assume you have a main stylesheet for consistency -->
     <style>
         body {
@@ -14,6 +14,47 @@
         h1, h2 {
             color: #333;
         }
+        .universe-selection {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .universe-button {
+            display: inline-block;
+            padding: 15px 25px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+        .universe-button:hover {
+            background-color: #45a049;
+        }
+        .instructions {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Universe Selection Header -->
+    <h1>Choose Your Universe</h1>
+    <p class="instructions">Select the universe you want to fight in:</p>
+
+    <!-- Universe Selection Buttons -->
+    <div class="universe-selection">
+        <% universes.forEach(universe => { %>
+            <a href="/fights/selectCharacter?universe=<%= universe %>" class="universe-button"><%= universe %></a>
+        <% }) %>
+    </div>
+
+    <!-- Footer and other includes -->
+    <%- include('partials/footer') %> <!-- Footer partial -->
+
+    <!-- Styles specific to dynamic health and fight details for the fight simulation part -->
+    <style>
         .fight-log {
             list-style-type: none;
             padding: 0;
@@ -60,65 +101,5 @@
             }
         }
     </style>
-</head>
-<body>
-    <h1>Fight Details</h1>
-    
-    <!-- Show the characters involved -->
-    <div class="fight-details">
-        <h2><%= char1.name %> vs. <%= char2.name %></h2>
-        <p>Universe: <%= char1.universe %> vs. <%= char2.universe %></p>
-
-        <!-- Dynamic Health Bars for each character -->
-        <div class="health-bars">
-            <div class="health-bar">
-                <strong><%= char1.name %></strong>
-                <div class="health-bar-inner" id="char1-health-bar" style="width: <%= char1Health %>%"></div>
-                <p>Health: <%= char1Health %>/100</p>
-            </div>
-            <div class="health-bar">
-                <strong><%= char2.name %></strong>
-                <div class="health-bar-inner" id="char2-health-bar" style="width: <%= char2Health %>%"></div>
-                <p>Health: <%= char2Health %>/100</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Display the round-by-round breakdown of the fight -->
-    <h2>Round Breakdown</h2>
-    <ul class="fight-log">
-        <% fightResult.log.forEach(log => { %>
-            <li><%= log %></li>
-        <% }) %>
-    </ul>
-
-    <!-- Show the fight winner -->
-    <div class="fight-winner">
-        <h2>Winner: <%= fightResult.winner %></h2>
-    </div>
-
-    <!-- Option to simulate another fight -->
-    <a href="/fights" class="simulate-again">Simulate Another Fight</a>
-
-    <script>
-
-        // Function to update health bars dynamically during the fight
-        function updateHealthBars() {
-            document.getElementById('char1-health-bar').style.width = `${char1Health}%`;
-            document.getElementById('char2-health-bar').style.width = `${char2Health}%`;
-        }
-
-        // Example logic for updating health bars during the fight (you can replace this with real data)
-        function simulateFightRound(damageToChar1, damageToChar2) {
-            char1Health = Math.max(char1Health - damageToChar1, 0);  // Ensure health doesn't go below 0
-            char2Health = Math.max(char2Health - damageToChar2, 0);  // Ensure health doesn't go below 0
-            updateHealthBars();  // Update the health bars after each round
-        }
-
-        // Example simulation of a fight round (replace with real-time updates during the fight)
-        setTimeout(() => {
-            simulateFightRound(20, 15);  // Simulating damage to both characters
-        }, 2000);  // Simulate after 2 seconds (for example)
-    </script>
 </body>
 </html>

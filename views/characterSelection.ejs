@@ -1,0 +1,55 @@
+<%- include('partials/header') %>  <!-- Include the header partial -->
+
+<main>
+  <h1>Choose Your Character from <%= universe %></h1>
+
+  <!-- Display character options -->
+  <form action="/fights/simulate" method="POST">
+    <div class="character-selection">
+      <% characters.forEach(character => { %>
+        <div class="character-option">
+          <input type="radio" id="<%= character._id %>" name="char1Id" value="<%= character._id %>" required>
+          <label for="<%= character._id %>"><%= character.name %></label>
+        </div>
+      <% }) %>
+    </div>
+    
+    <!-- Choose an opponent (hardcoded or can be dynamic in future) -->
+    <h2>Choose Your Opponent</h2>
+    <select name="char2Id" required>
+      <% characters.forEach(character => { %>
+        <option value="<%= character._id %>"><%= character.name %></option>
+      <% }) %>
+    </select>
+    
+    <button type="submit" class="start-fight-button">Start Fight</button>
+  </form>
+</main>
+
+<%- include('partials/footer') %>  <!-- Include the footer partial -->
+
+<!-- Styles for layout -->
+<style>
+  .character-selection {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .character-option {
+    margin-bottom: 10px;
+  }
+
+  .start-fight-button {
+    padding: 15px 25px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+  }
+
+  .start-fight-button:hover {
+    background-color: #45a049;
+  }
+</style>
