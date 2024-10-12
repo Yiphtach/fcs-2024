@@ -35,11 +35,8 @@
 
 <!-- JavaScript for Real-Time Health Bar and Fight Log Updates -->
 <script>
-    let char1Health = <%= char1Health %>;
-    let char2Health = <%= char2Health %>;
 
     // Simulate health bar updates
-    const fightLog = <%- JSON.stringify(fightResult.log) %>;
     const fightLogElement = document.getElementById('fight-log');
 
     fightLog.forEach((log, index) => {
