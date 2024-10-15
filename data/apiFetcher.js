@@ -25,8 +25,8 @@ async function fetchDataFromAPI(apiUrl, params = {}, retries = 3, timeout = 5000
 
 // Example usage
 (async () => {
-    const apiUrl = 'https://api.example.com/characters';  // Replace with actual API
-    const queryParams = { limit: 10, page: 2 };  // Example query parameters
+    const apiUrl = 'https://superheroapi.com/api/e25a217cfe9babe1aae8ed7cd83112eb/search/character-id';  // Replace with actual API
+    const queryParams = { limit: 40, page: 17 };  // Example query parameters
 
     try {
         const data = await fetchDataFromAPI(apiUrl, queryParams);  // Fetch with query params

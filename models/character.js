@@ -12,16 +12,22 @@ const CharacterSchema = new Schema({
     type: String,
     required: [true, 'Universe is required'],
     enum: [
-      'DC', 
-      'Marvel', 
-      'Dark Horse Comics', 
-      'Image Comics', 
-      'Valiant Comics', 
-      'Other', 
-      'Marvel Comics', 
+      'DC',
+      'Marvel',
+      'Dark Horse Comics',
+      'Image Comics',
+      'Valiant Comics',
+      'Other',
+      'Marvel Comics',
       'DC Comics'
-    ],  // Expanded valid universe options
-    default: 'Other'
+    ],
+    default: 'Other',
+    validate: {
+      validator: function (v) {
+        return v !== undefined;
+      },
+      message: 'Universe cannot be undefined'
+    }
   },
   stats: {
     strength: {
@@ -62,8 +68,10 @@ const CharacterSchema = new Schema({
     }
   },
   abilities: {
-    type: [Schema.Types.Mixed],  // Allows both strings and objects in the abilities field
+    type: [Schema.Types.Mixed],  // This allows abilities to be strings or objects
     default: []
+    // Example:
+    // abilities: [{ name: 'Fly', powerLevel: 80, type: 'Offensive' }]
   },
   imageUrl: {
     type: String,
@@ -79,12 +87,14 @@ const CharacterSchema = new Schema({
   },
   totalFights: {
     type: Number,
-    default: 0
+    default: function () {
+      return this.wins + this.losses;  // Ensure totalFights is consistent
+    }
   },
   lastFightDate: {
     type: Date
   }
-});
+}, { timestamps: true });  // Automatically adds createdAt and updatedAt fields
 
 // Virtual property: win ratio
 CharacterSchema.virtual('winRatio').get(function () {
@@ -105,6 +115,12 @@ CharacterSchema.virtual('averageAbilityPower').get(function () {
     return typeof ability === 'object' ? total + ability.powerLevel : total;  // Ensure only object abilities contribute
   }, 0);
   return (totalPower / this.abilities.length).toFixed(2);
+});
+
+// Pre-save hook to ensure totalFights is correct
+CharacterSchema.pre('save', function (next) {
+  this.totalFights = this.wins + this.losses;  // Ensure totalFights always equals wins + losses
+  next();
 });
 
 // Middleware to automatically update the last fight date

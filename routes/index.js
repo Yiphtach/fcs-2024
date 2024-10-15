@@ -4,7 +4,12 @@ const router = express.Router();
 // Home Page Route
 router.get('/', (req, res) => {
     try {
-        res.render('index', { title: 'Home' });  // Render the home page with dynamic title
+        res.render('index', { title: 'Home', buttons: [
+            { label: 'Simulate a Fight', link: '/fights' },
+            { label: 'View Characters', link: '/characters' },
+            { label: 'Leaderboard', link: '/leaderboard' },
+            { label: 'About', link: '/about' }
+        ]});
     } catch (error) {
         console.error('Error rendering home page:', error);
         res.status(500).send('Internal Server Error');
@@ -14,7 +19,12 @@ router.get('/', (req, res) => {
 // About Page Route
 router.get('/about', (req, res) => {
     try {
-        res.render('about', { title: 'About' });  // Render the about page with dynamic title
+        res.render('about', { title: 'About', buttons: [
+            { label: 'Home', link: '/' },
+            { label: 'Simulate a Fight', link: '/fights' },
+            { label: 'View Characters', link: '/characters' },
+            { label: 'Leaderboard', link: '/leaderboard' }
+        ]});
     } catch (error) {
         console.error('Error rendering about page:', error);
         res.status(500).send('Internal Server Error');

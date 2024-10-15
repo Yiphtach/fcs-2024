@@ -1,7 +1,7 @@
 const Character = require('../models/character');
 const Fight = require('../models/fight');  // Assuming you've created a Fight model for logging fight history
 
-// Display fight setup form
+// Display fight setup form (Choose Universe)
 exports.showFightSetup = async (req, res) => {
   try {
     const universes = ['Marvel', 'DC', 'Other'];  // Universes to choose from
@@ -24,17 +24,17 @@ exports.showCharacterSelection = async (req, res) => {
   }
 };
 
-// Simulate a fight
+// Simulate a fight between two characters
 exports.simulateFight = async (req, res) => {
   try {
     const { char1Id, char2Id } = req.body;
 
-    // Validate input
+    // Validate character selection
     if (!char1Id || !char2Id) {
       return res.status(400).send('Bad Request: Missing character IDs.');
     }
 
-    // Validate if character IDs are valid MongoDB ObjectIDs
+    // Check for valid MongoDB ObjectIDs
     if (!char1Id.match(/^[0-9a-fA-F]{24}$/) || !char2Id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).send('Bad Request: Invalid Character IDs.');
     }
@@ -46,13 +46,13 @@ exports.simulateFight = async (req, res) => {
       return res.status(404).send('Character not found.');
     }
 
-    // Perform the fight simulation
+    // Simulate the fight
     const fightResult = dynamicFightSimulation(char1, char2);
 
     // Update character stats
     await updateCharacterStats(fightResult.winner, fightResult.loser);
 
-    // Log the fight history
+    // Log the fight
     await logFightHistory(fightResult.winner, fightResult.loser, fightResult.log, fightResult.stats);
 
     res.render('fightResult', { title: 'Fight Result', char1, char2, fightResult });
@@ -62,14 +62,13 @@ exports.simulateFight = async (req, res) => {
   }
 };
 
-// Dynamic fight simulation logic with balancing
+// Dynamic fight simulation logic with balancing and luck
 function dynamicFightSimulation(char1, char2) {
   let char1Health = 100;
   let char2Health = 100;
   const fightLog = [];
   let round = 1;
 
-  // Track fight stats for logging purposes
   const fightStats = {
     totalRounds: 0,
     winnerDamageDealt: 0,
@@ -110,27 +109,23 @@ function dynamicFightSimulation(char1, char2) {
   return { result: 'It\'s a tie!', log: fightLog, stats: fightStats };
 }
 
-// Calculate attack damage with balancing (luck and special abilities)
+// Calculate attack with luck and special abilities
 function calculateAttack(attacker, defender) {
   const attackStrength = attacker.stats.strength * Math.random();
   const defense = defender.stats.durability * Math.random();
-  
-  // Luck factor influences final damage outcome
-  const luckFactor = Math.random() > 0.5 ? 1.2 : 0.8;
 
-  // Apply speed advantage
+  const luckFactor = Math.random() > 0.5 ? 1.2 : 0.8;
   const agilityAdvantage = attacker.stats.speed > defender.stats.speed ? 1.2 : 0.8;
 
-  // Special move triggers based on intelligence and chance
-  const isCriticalHit = Math.random() < (attacker.stats.intelligence / 100);  
+  const isCriticalHit = Math.random() < (attacker.stats.intelligence / 100);
   const move = isCriticalHit ? 'Critical Hit' : attacker.specialAbility || 'Normal Attack';
 
-  const damage = Math.max((attackStrength * agilityAdvantage * luckFactor) - defense, 0);  // Balance damage
+  const damage = Math.max((attackStrength * agilityAdvantage * luckFactor) - defense, 0);
 
   return { move, damage };
 }
 
-// Update character stats after the fight
+// Update stats after the fight
 async function updateCharacterStats(winner, loser) {
   try {
     winner.wins++;
@@ -144,7 +139,7 @@ async function updateCharacterStats(winner, loser) {
   }
 }
 
-// Log fight history in the database
+// Log fight history
 async function logFightHistory(winner, loser, log, fightStats) {
   try {
     const fight = new Fight({

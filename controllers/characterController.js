@@ -3,7 +3,7 @@ const Character = require('../models/character');
 // List all characters
 exports.listCharacters = async (req, res) => {
   try {
-    const characters = await Character.find({}, 'name universe stats');  // Fetch only necessary fields
+    const characters = await Character.find({}, 'name universe stats');
     res.render('characters', { title: 'All Characters', characters });
   } catch (error) {
     console.error('Error listing characters:', error);
@@ -19,13 +19,15 @@ exports.showCreateForm = (req, res) => {
 // Create a new character with detailed validation
 exports.createCharacter = async (req, res) => {
   try {
+    const { name, universe, stats } = req.body;
+
     // Input validation
-    if (!req.body.name || !req.body.universe || !req.body.stats) {
+    if (!name || !universe || !stats) {
       return res.status(400).send('Bad Request: Missing required fields (name, universe, stats).');
     }
 
     // Validate stats object structure
-    const { strength, speed, durability, intelligence } = req.body.stats;
+    const { strength, speed, durability, intelligence } = stats;
     if (
       typeof strength !== 'number' || typeof speed !== 'number' || 
       typeof durability !== 'number' || typeof intelligence !== 'number'
@@ -33,7 +35,8 @@ exports.createCharacter = async (req, res) => {
       return res.status(400).send('Bad Request: Invalid stats. Each stat must be a number.');
     }
 
-    const character = new Character(req.body);
+    // Create new character
+    const character = new Character({ name, universe, stats });
     await character.save();
     res.redirect('/characters');
   } catch (error) {
@@ -59,13 +62,15 @@ exports.showEditForm = async (req, res) => {
 // Update a character with detailed validation
 exports.updateCharacter = async (req, res) => {
   try {
+    const { name, universe, stats } = req.body;
+
     // Input validation
-    if (!req.body.name || !req.body.universe || !req.body.stats) {
+    if (!name || !universe || !stats) {
       return res.status(400).send('Bad Request: Missing required fields for character update (name, universe, stats).');
     }
 
     // Validate stats object structure
-    const { strength, speed, durability, intelligence } = req.body.stats;
+    const { strength, speed, durability, intelligence } = stats;
     if (
       typeof strength !== 'number' || typeof speed !== 'number' || 
       typeof durability !== 'number' || typeof intelligence !== 'number'
@@ -73,7 +78,8 @@ exports.updateCharacter = async (req, res) => {
       return res.status(400).send('Bad Request: Invalid stats. Each stat must be a number.');
     }
 
-    const character = await Character.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    // Update character
+    const character = await Character.findByIdAndUpdate(req.params.id, { name, universe, stats }, { new: true, runValidators: true });
     if (!character) {
       return res.status(404).send('Character not found');
     }
