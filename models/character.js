@@ -12,15 +12,16 @@ const CharacterSchema = new Schema({
     type: String,
     required: [true, 'Universe is required'],
     enum: [
-      'DC',
-      'Marvel',
-      'Dark Horse Comics',
-      'Image Comics',
-      'Valiant Comics',
-      'Other',
-      'Marvel Comics',
+      'DC', 
+      'Marvel', 
+      'Dark Horse Comics', 
+      'Image Comics', 
+      'Valiant Comics', 
+      'NBC - Heroes',   // Add this value to allow NBC - Heroes
+      'Other', 
+      'Marvel Comics', 
       'DC Comics'
-    ],
+    ],  // Expanded valid universe options
     default: 'Other',
     validate: {
       validator: function (v) {

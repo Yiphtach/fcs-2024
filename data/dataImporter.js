@@ -20,12 +20,24 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Function to handle invalid universe values
+function getValidUniverse(universe) {
+  const validUniverses = ['DC', 'Marvel', 'Dark Horse Comics', 'Image Comics', 'Valiant Comics', 'NBC - Heroes', 'Other', 'Marvel Comics', 'DC Comics'];
+  return validUniverses.includes(universe) ? universe : 'Other';
+}
+
+// Function to handle missing or invalid stats, and cap values between 0 and 500
+function getValidStat(stat) {
+  if (stat === null || isNaN(stat)) {
+    return 0; // Default to 0 if stat is null or not a number
+  }
+  return Math.max(0, Math.min(stat, 500)); // Ensure stat is between 0 and 500
+}
+
 // Function to process abilities and handle both string and object types
 function processAbilities(abilitiesData) {
   if (!abilitiesData) return ['Unknown'];
-
   return abilitiesData.split(', ').map(ability => {
-    // If it's a string, return it as is or process as object
     return typeof ability === 'string'
       ? {
           name: ability,
@@ -41,7 +53,7 @@ function processAbilities(abilitiesData) {
 async function fetchAndSaveCharacter(characterId) {
   const maxRetries = 3; // Set maximum retry attempts
   let attempt = 0;
-  
+
   while (attempt < maxRetries) {
     try {
       // Make request to SuperHero API
@@ -66,14 +78,14 @@ async function fetchAndSaveCharacter(characterId) {
       // Prepare character data to store in MongoDB
       const character = new Character({
         name: data.name,
-        universe: data.biography.publisher || 'Unknown',
+        universe: getValidUniverse(data.biography.publisher), // Validate universe
         stats: {
-          strength: data.powerstats.strength || 0,
-          speed: data.powerstats.speed || 0,
-          durability: data.powerstats.durability || 0,
-          power: data.powerstats.power || 0,
-          combat: data.powerstats.combat || 0,
-          intelligence: data.powerstats.intelligence || 0,
+          strength: getValidStat(data.powerstats.strength),
+          speed: getValidStat(data.powerstats.speed),
+          durability: getValidStat(data.powerstats.durability),
+          power: getValidStat(data.powerstats.power),
+          combat: getValidStat(data.powerstats.combat),
+          intelligence: getValidStat(data.powerstats.intelligence)
         },
         abilities,  // Pass processed abilities
         imageUrl: data.image.url || '',

@@ -66,13 +66,13 @@ app.set('view engine', 'ejs');
 const indexRoutes = require('./routes/index');
 const characterRoutes = require('./routes/characters');
 const fightRoutes = require('./routes/fights');
-const leaderboardRoutes = require('./routes/leaderboard');
+const leaderboardRoutes = require('./routes/leaderboards');
 
 // Apply Routes
 app.use('/', indexRoutes);
 app.use('/characters', characterRoutes);
 app.use('/fights', fightRoutes);
-app.use('/leaderboard', leaderboardRoutes);
+app.use('/leaderboards', leaderboardRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
