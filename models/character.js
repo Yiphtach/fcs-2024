@@ -35,44 +35,42 @@ const CharacterSchema = new Schema({
       type: Number,
       required: true,
       min: [0, 'Strength cannot be less than 0'],
-      max: [100, 'Strength cannot exceed 100']
+      max: [500, 'Strength cannot exceed 500']  // Updated max limit to 500
     },
     speed: {
       type: Number,
       required: true,
       min: [0, 'Speed cannot be less than 0'],
-      max: [100, 'Speed cannot exceed 100']
+      max: [500, 'Speed cannot exceed 500']  // Updated max limit to 500
     },
     durability: {
       type: Number,
       required: true,
       min: [0, 'Durability cannot be less than 0'],
-      max: [100, 'Durability cannot exceed 100']
+      max: [500, 'Durability cannot exceed 500']  // Updated max limit to 500
     },
     power: {
       type: Number,
       required: true,
       min: [0, 'Power cannot be less than 0'],
-      max: [100, 'Power cannot exceed 100']
+      max: [500, 'Power cannot exceed 500']  // Updated max limit to 500
     },
     combat: {
       type: Number,
       required: true,
       min: [0, 'Combat cannot be less than 0'],
-      max: [100, 'Combat cannot exceed 100']
+      max: [500, 'Combat cannot exceed 500']  // Updated max limit to 500
     },
     intelligence: {
       type: Number,
       required: true,
       min: [0, 'Intelligence cannot be less than 0'],
-      max: [100, 'Intelligence cannot exceed 100']
+      max: [500, 'Intelligence cannot exceed 500']  // Updated max limit to 500
     }
   },
   abilities: {
     type: [Schema.Types.Mixed],  // This allows abilities to be strings or objects
     default: []
-    // Example:
-    // abilities: [{ name: 'Fly', powerLevel: 80, type: 'Offensive' }]
   },
   imageUrl: {
     type: String,
