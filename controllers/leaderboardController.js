@@ -17,7 +17,7 @@ exports.showLeaderboard = async (req, res) => {
     const totalCharacters = await Character.countDocuments();  // Get total number of characters for pagination
 
     // Render the leaderboard with pagination
-    res.render('leaderboard', {
+    res.render('leaderboards', {
       title: 'Leaderboard',
       characters,
       currentPage: page,

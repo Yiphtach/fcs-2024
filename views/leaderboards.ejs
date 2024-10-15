@@ -124,7 +124,7 @@
                     <td><%= character.totalFights %></td>
                     <td><%= (character.wins / character.totalFights * 100).toFixed(2) %> %</td>
                     <td>
-                        <a href="/leaderboard/<%= character._id %>" class="view-character">View Details</a>
+                        <a href="/characters/<%= character._id %>" class="view-character">View Details</a> <!-- Link to character details page -->
                     </td>
                 </tr>
             <% }) %>

@@ -6,6 +6,9 @@ const leaderboardController = require('../controllers/leaderboardController');
 // Route for the leaderboard page
 router.get('/leaderboard', leaderboardController.showLeaderboard);
 
+// Route for viewing character details
+router.get('/leaderboard/:id', leaderboardController.showCharacterDetails);
+
 // GET: Display the leaderboard with pagination and navigation buttons
 router.get('/', async (req, res) => {
   try {
@@ -24,7 +27,7 @@ router.get('/', async (req, res) => {
     const totalPages = Math.ceil(totalCharacters / limit);
 
     // Render leaderboard with pagination and navigation buttons
-    res.render('leaderboard', {
+    res.render('leaderboards', {
       title: 'Leaderboard',
       characters,
       currentPage: page,  // Pass current page for pagination

@@ -48,9 +48,9 @@ exports.createCharacter = async (req, res) => {
     // Validate stats object structure
     const { strength, speed, durability, power, combat, intelligence } = stats;
     if (
-      [strength, speed, durability, power, combat, intelligence].some(stat => typeof stat !== 'number')
+      [strength, speed, durability, power, combat, intelligence].some(stat => typeof stat !== 'number' || isNaN(stat))
     ) {
-      return res.status(400).send('Bad Request: Invalid stats. Each stat must be a number.');
+      return res.status(400).send('Bad Request: Invalid stats. Each stat must be a valid number.');
     }
 
     // Check for duplicate characters
@@ -97,9 +97,9 @@ exports.updateCharacter = async (req, res) => {
     // Validate stats object structure
     const { strength, speed, durability, power, combat, intelligence } = stats;
     if (
-      [strength, speed, durability, power, combat, intelligence].some(stat => typeof stat !== 'number')
+      [strength, speed, durability, power, combat, intelligence].some(stat => typeof stat !== 'number' || isNaN(stat))
     ) {
-      return res.status(400).send('Bad Request: Invalid stats. Each stat must be a number.');
+      return res.status(400).send('Bad Request: Invalid stats. Each stat must be a valid number.');
     }
 
     // Update character

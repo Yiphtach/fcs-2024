@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
         res.render('index', { title: 'Home', buttons: [
             { label: 'Simulate a Fight', link: '/fights' },
             { label: 'View Characters', link: '/characters' },
-            { label: 'Leaderboard', link: '/leaderboard' },
+            { label: 'Leaderboards', link: '/leaderboards' },
             { label: 'About', link: '/about' }
         ]});
     } catch (error) {
@@ -23,7 +23,7 @@ router.get('/about', (req, res) => {
             { label: 'Home', link: '/' },
             { label: 'Simulate a Fight', link: '/fights' },
             { label: 'View Characters', link: '/characters' },
-            { label: 'Leaderboard', link: '/leaderboard' }
+            { label: 'Leaderboards', link: '/leaderboards' }
         ]});
     } catch (error) {
         console.error('Error rendering about page:', error);

@@ -10,6 +10,8 @@ const compression = require('compression'); // Added compression for better perf
 const rateLimit = require('express-rate-limit'); // Added rate limiting for security
 const dataImporter = require('./data/dataImporter'); // Import the data importer script
 
+const characterRoutes = require('./routes/characters');
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -66,13 +68,13 @@ app.set('view engine', 'ejs');
 const indexRoutes = require('./routes/index');
 const characterRoutes = require('./routes/characters');
 const fightRoutes = require('./routes/fights');
-const leaderboardRoutes = require('./routes/leaderboards');
+const leaderboardsRoutes = require('./routes/leaderboards');
 
 // Apply Routes
 app.use('/', indexRoutes);
 app.use('/characters', characterRoutes);
 app.use('/fights', fightRoutes);
-app.use('/leaderboards', leaderboardRoutes);
+app.use('/leaderboards', leaderboardsRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
