@@ -8,17 +8,21 @@
     <div class="character-selection">
       <% characters.forEach(character => { %>
         <div class="character-option">
-          <input type="radio" id="<%= character._id %>" name="char1Id" value="<%= character._id %>" required>
-          <label for="<%= character._id %>"><%= character.name %></label>
+          <input type="radio" id="char1-<%= character._id %>" name="char1Id" value="<%= character._id %>" required aria-label="<%= character.name %>">
+          <label for="char1-<%= character._id %>"><%= character.name %></label>
         </div>
       <% }) %>
     </div>
     
-    <!-- Choose an opponent (hardcoded or can be dynamic in future) -->
+    <!-- Choose an opponent -->
     <h2>Choose Your Opponent</h2>
-    <select name="char2Id" required>
+    <select name="char2Id" required aria-label="Choose your opponent">
+      <option value="" disabled selected>Select an opponent</option>
       <% characters.forEach(character => { %>
-        <option value="<%= character._id %>"><%= character.name %></option>
+        <!-- Prevent choosing the same character as opponent -->
+        <% if (character._id !== char1Id) { %>
+          <option value="<%= character._id %>"><%= character.name %></option>
+        <% } %>
       <% }) %>
     </select>
     
@@ -31,13 +35,22 @@
 <!-- Styles for layout -->
 <style>
   .character-selection {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
     margin-bottom: 20px;
   }
-  
+
   .character-option {
-    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+
+  .character-option:hover {
+    background-color: #e0e0e0;
   }
 
   .start-fight-button {
@@ -47,9 +60,19 @@
     text-decoration: none;
     font-size: 18px;
     border-radius: 5px;
+    margin-top: 20px;
   }
 
   .start-fight-button:hover {
     background-color: #45a049;
   }
+
+  select {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    width: 100%;
+    border-radius: 5px;
+  }
+
 </style>

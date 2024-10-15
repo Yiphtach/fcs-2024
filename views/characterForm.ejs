@@ -19,23 +19,45 @@
         </select>
 
         <!-- Stats -->
-        <label for="strength">Strength</label>
-        <input type="number" id="strength" name="stats[strength]" value="<%= character ? character.stats.strength : '' %>" min="0" max="100" required placeholder="Enter strength (0-100)">
+        <fieldset>
+            <legend>Stats (0-100)</legend>
+            <label for="strength">Strength</label>
+            <input type="number" id="strength" name="stats[strength]" value="<%= character ? character.stats.strength : '' %>" min="0" max="100" required placeholder="Strength">
 
-        <label for="speed">Speed</label>
-        <input type="number" id="speed" name="stats[speed]" value="<%= character ? character.stats.speed : '' %>" min="0" max="100" required placeholder="Enter speed (0-100)">
+            <label for="speed">Speed</label>
+            <input type="number" id="speed" name="stats[speed]" value="<%= character ? character.stats.speed : '' %>" min="0" max="100" required placeholder="Speed">
 
-        <label for="durability">Durability</label>
-        <input type="number" id="durability" name="stats[durability]" value="<%= character ? character.stats.durability : '' %>" min="0" max="100" required placeholder="Enter durability (0-100)">
+            <label for="durability">Durability</label>
+            <input type="number" id="durability" name="stats[durability]" value="<%= character ? character.stats.durability : '' %>" min="0" max="100" required placeholder="Durability">
 
-        <label for="power">Power</label>
-        <input type="number" id="power" name="stats[power]" value="<%= character ? character.stats.power : '' %>" min="0" max="100" required placeholder="Enter power (0-100)">
+            <label for="power">Power</label>
+            <input type="number" id="power" name="stats[power]" value="<%= character ? character.stats.power : '' %>" min="0" max="100" required placeholder="Power">
 
-        <label for="combat">Combat</label>
-        <input type="number" id="combat" name="stats[combat]" value="<%= character ? character.stats.combat : '' %>" min="0" max="100" required placeholder="Enter combat (0-100)">
+            <label for="combat">Combat</label>
+            <input type="number" id="combat" name="stats[combat]" value="<%= character ? character.stats.combat : '' %>" min="0" max="100" required placeholder="Combat">
 
-        <label for="intelligence">Intelligence</label>
-        <input type="number" id="intelligence" name="stats[intelligence]" value="<%= character ? character.stats.intelligence : '' %>" min="0" max="100" required placeholder="Enter intelligence (0-100)">
+            <label for="intelligence">Intelligence</label>
+            <input type="number" id="intelligence" name="stats[intelligence]" value="<%= character ? character.stats.intelligence : '' %>" min="0" max="100" required placeholder="Intelligence">
+        </fieldset>
+
+        <!-- Abilities (Editable, with Default Abilities) -->
+        <fieldset>
+            <legend>Abilities</legend>
+            <div id="abilities">
+                <% if (character && character.abilities.length > 0) { %>
+                    <% character.abilities.forEach((ability, index) => { %>
+                        <label for="ability-<%= index %>">Ability <%= index + 1 %></label>
+                        <input type="text" id="ability-<%= index %>" name="abilities[<%= index %>][name]" value="<%= ability.name %>" placeholder="Enter ability name">
+                        <input type="number" name="abilities[<%= index %>][powerLevel]" value="<%= ability.powerLevel %>" min="0" max="100" placeholder="Power Level">
+                    <% }) %>
+                <% } else { %>
+                    <label for="ability-0">Ability 1</label>
+                    <input type="text" id="ability-0" name="abilities[0][name]" placeholder="Enter ability name">
+                    <input type="number" name="abilities[0][powerLevel]" min="0" max="100" placeholder="Power Level">
+                <% } %>
+            </div>
+            <button type="button" onclick="addAbility()">Add Ability</button>
+        </fieldset>
 
         <!-- Submit Button -->
         <button type="submit" class="btn-submit"><%= character ? 'Update' : 'Create' %> Character</button>
@@ -43,6 +65,34 @@
 </main>
 
 <%- include('partials/footer') %> <!-- Include the footer partial -->
+
+<!-- JavaScript to Dynamically Add Abilities -->
+<script>
+    function addAbility() {
+        const abilitiesDiv = document.getElementById('abilities');
+        const newIndex = abilitiesDiv.children.length / 2;  // Each ability has two inputs (name and powerLevel)
+        const label = document.createElement('label');
+        label.textContent = `Ability ${newIndex + 1}`;
+        label.setAttribute('for', `ability-${newIndex}`);
+
+        const inputName = document.createElement('input');
+        inputName.setAttribute('type', 'text');
+        inputName.setAttribute('id', `ability-${newIndex}`);
+        inputName.setAttribute('name', `abilities[${newIndex}][name]`);
+        inputName.setAttribute('placeholder', 'Enter ability name');
+
+        const inputPowerLevel = document.createElement('input');
+        inputPowerLevel.setAttribute('type', 'number');
+        inputPowerLevel.setAttribute('name', `abilities[${newIndex}][powerLevel]`);
+        inputPowerLevel.setAttribute('min', '0');
+        inputPowerLevel.setAttribute('max', '100');
+        inputPowerLevel.setAttribute('placeholder', 'Power Level');
+
+        abilitiesDiv.appendChild(label);
+        abilitiesDiv.appendChild(inputName);
+        abilitiesDiv.appendChild(inputPowerLevel);
+    }
+</script>
 
 <!-- CSS Styles -->
 <style>
@@ -99,6 +149,34 @@
 
     .btn-submit:hover {
         background-color: #45a049;
+    }
+
+    fieldset {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    legend {
+        padding: 0 10px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    button[type="button"] {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button[type="button"]:hover {
+        background-color: #0056b3;
     }
 
     /* Responsive Design */

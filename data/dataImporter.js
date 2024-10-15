@@ -53,6 +53,13 @@ async function fetchAndSaveCharacter(characterId) {
         throw new Error(`Unexpected response status: ${response.status}`);
       }
 
+      // Check if the character already exists in MongoDB (by name)
+      const existingCharacter = await Character.findOne({ name: data.name });
+      if (existingCharacter) {
+        console.log(`Character ${data.name} already exists in the database. Skipping...`);
+        return;  // Skip saving this character to avoid duplicates
+      }
+
       // Process abilities to fit the model schema
       const abilities = processAbilities(data.work.occupation);
 
@@ -101,7 +108,7 @@ async function fetchAndSaveCharacter(characterId) {
 
 // Fetch multiple characters with delays to avoid rate limiting
 async function fetchMultipleCharacters() {
-  const characterIds = [1, 2, 3, 4, 5]; // Add more IDs as needed
+  const characterIds = Array.from({ length: 750 }, (_, i) => i + 1);  // Create an array of character IDs from 1 to 750
 
   for (let i = 0; i < characterIds.length; i++) {
     await fetchAndSaveCharacter(characterIds[i]);  // Wait for each character to be fetched

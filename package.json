@@ -9,7 +9,8 @@
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",
     "three": "^0.169.0",
-    "three-gltf-loader": "^1.111.0"
+    "three-gltf-loader": "^1.111.0",
+    "vite": "^5.4.9"
   },
   "name": "fcs-2024",
   "version": "1.0.0",
