@@ -4,7 +4,7 @@
   <h1>Choose Your Character from <%= universe %></h1>
 
   <!-- Back Button -->
-  <button onclick="goBack()" class="back-button">Go Back</button>
+  <button onclick="window.history.back()" class="back-button">Go Back</button>
 
   <!-- Display character options for Character 1 -->
   <form action="/fights/simulate" method="POST">
@@ -48,6 +48,7 @@
   function storeSelectedCharacter(charId, name, imageUrl) {
     selectedCharacterId = charId;
     displaySelectedCharacter(name, imageUrl);
+    updateOpponentOptions();
   }
 
   // Function to display the selected character's name and image
@@ -57,9 +58,19 @@
     document.getElementById('selected-image').src = imageUrl;
   }
 
-  // Function to go back to the previous page
-  function goBack() {
-    window.history.back();  // This will take the user back to the previous page
+  // Function to dynamically update the opponent selection options
+  function updateOpponentOptions() {
+    const opponentSelect = document.getElementById('char2Id');
+    const options = opponentSelect.options;
+
+    // Loop through Character 2 dropdown options to disable the selected Character 1
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].value === selectedCharacterId) {
+        options[i].disabled = true; // Disable char1 from being selected as char2
+      } else {
+        options[i].disabled = false; // Enable other characters as options
+      }
+    }
   }
 </script>
 
