@@ -3,9 +3,10 @@
 <main>
   <h1>Choose Your Character from <%= universe %></h1>
 
-  <!-- Display character options -->
+  <!-- Display character options for Character 1 -->
   <form action="/fights/simulate" method="POST">
     <div class="character-selection">
+      <h2>Choose Character 1</h2>
       <% characters.forEach(character => { %>
         <div class="character-option">
           <input type="radio" id="char1-<%= character._id %>" name="char1Id" value="<%= character._id %>" required aria-label="<%= character.name %>" onclick="storeSelectedCharacter('<%= character._id %>')">
@@ -15,7 +16,7 @@
     </div>
 
     <!-- Choose an opponent -->
-    <h2>Choose Your Opponent</h2>
+    <h2>Choose Your Opponent (Character 2)</h2>
     <select name="char2Id" id="char2Id" required aria-label="Choose your opponent">
       <option value="" disabled selected>Select an opponent</option>
       <% characters.forEach(character => { %>
@@ -29,24 +30,27 @@
 
 <%- include('partials/footer') %> <!-- Include the footer partial -->
 
-<!-- JavaScript to store and handle selected character -->
+<!-- JavaScript to handle character selection logic -->
 <script>
-  let selectedCharacterId = '';
+  let selectedCharacterId = ''; // Store the selected character ID for char1
 
+  // Function to store selected Character 1 and update the Character 2 dropdown
   function storeSelectedCharacter(charId) {
     selectedCharacterId = charId;
     updateOpponentOptions();
   }
 
+  // Function to dynamically update the opponent selection options
   function updateOpponentOptions() {
     const opponentSelect = document.getElementById('char2Id');
     const options = opponentSelect.options;
 
+    // Loop through Character 2 dropdown options to disable the selected Character 1
     for (let i = 0; i < options.length; i++) {
       if (options[i].value === selectedCharacterId) {
-        options[i].disabled = true; // Disable the selected character from being chosen as the opponent
+        options[i].disabled = true; // Disable char1 from being selected as char2
       } else {
-        options[i].disabled = false;
+        options[i].disabled = false; // Enable other characters as options
       }
     }
   }
@@ -81,6 +85,7 @@
     font-size: 18px;
     border-radius: 5px;
     margin-top: 20px;
+    cursor: pointer;
   }
 
   .start-fight-button:hover {
@@ -94,4 +99,5 @@
     width: 100%;
     border-radius: 5px;
   }
+
 </style>

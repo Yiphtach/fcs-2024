@@ -7,23 +7,24 @@ exports.showLeaderboard = async (req, res) => {
     const limit = 30;  // Show 30 characters per page
     const skip = (page - 1) * limit;
 
-    // Fetch characters sorted by most wins and then by win ratio with pagination
+    // Fetch characters sorted by wins, win ratio, and total fights with pagination
     const characters = await Character.find()
-      .sort({ wins: -1, winRatio: -1 })  // Sort by wins and win ratio
-      .select('name universe wins losses totalFights')  // Only fetch the necessary fields
+      .sort({ wins: -1, winRatio: -1, totalFights: -1 })  // Sort by wins, win ratio, and total fights
+      .select('name universe wins losses totalFights winRatio')  // Fetch necessary fields, including win ratio
       .skip(skip)
       .limit(limit);
 
     const totalCharacters = await Character.countDocuments();  // Get total number of characters for pagination
 
+    // Render the leaderboard with pagination
     res.render('leaderboard', {
       title: 'Leaderboard',
       characters,
       currentPage: page,
-      totalPages: Math.ceil(totalCharacters / limit)
+      totalPages: Math.ceil(totalCharacters / limit),
     });
   } catch (error) {
-    console.error('Error displaying leaderboard:', error);
+    console.error('Error displaying leaderboard:', error.message);
     res.status(500).send('Internal Server Error');
   }
 };
@@ -32,7 +33,7 @@ exports.showLeaderboard = async (req, res) => {
 exports.showCharacterDetails = async (req, res) => {
   try {
     const character = await Character.findById(req.params.id)
-      .select('name universe stats wins losses totalFights imageUrl');  // Fetch only necessary fields
+      .select('name universe stats wins losses totalFights imageUrl');  // Fetch necessary fields
 
     if (!character) {
       return res.status(404).send('Character not found');
@@ -40,7 +41,7 @@ exports.showCharacterDetails = async (req, res) => {
 
     res.render('characterDetails', { title: `${character.name} Details`, character });
   } catch (error) {
-    console.error('Error displaying character details:', error);
+    console.error('Error displaying character details:', error.message);
     res.status(500).send('Internal Server Error');
   }
 };

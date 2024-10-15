@@ -34,6 +34,27 @@
         tbody tr:nth-child(even) {
             background-color: #fff;
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .pagination a:hover {
+            background-color: #45a049;
+        }
+        .pagination a.disabled {
+            pointer-events: none;
+            background-color: #ddd;
+        }
         .btn {
             display: inline-block;
             padding: 10px 20px;
@@ -45,27 +66,6 @@
             text-align: center;
         }
         .btn:hover {
-            background-color: #45a049;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        .action-buttons form {
-            display: inline;
-        }
-        .action-buttons button, .action-buttons a {
-            padding: 5px 10px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .action-buttons button:hover, .action-buttons a:hover {
             background-color: #45a049;
         }
         /* Responsive Design */
@@ -93,6 +93,10 @@
                 <th>Universe</th>
                 <th>Strength</th>
                 <th>Speed</th>
+                <th>Durability</th>
+                <th>Power</th>
+                <th>Combat</th>
+                <th>Intelligence</th>
                 <th>Wins</th>
                 <th>Losses</th>
                 <th>Total Fights</th>
@@ -108,6 +112,10 @@
                     <td><%= character.universe %></td>
                     <td><%= character.stats.strength %></td>
                     <td><%= character.stats.speed %></td>
+                    <td><%= character.stats.durability %></td>
+                    <td><%= character.stats.power %></td>
+                    <td><%= character.stats.combat %></td>
+                    <td><%= character.stats.intelligence %></td>
                     <td><%= character.wins %></td>
                     <td><%= character.losses %></td>
                     <td><%= character.totalFights %></td>
@@ -123,6 +131,25 @@
             <% }) %>
         </tbody>
     </table>
+
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        <% if (currentPage > 1) { %>
+            <a href="/characters?page=<%= currentPage - 1 %>">Previous</a>
+        <% } else { %>
+            <a href="#" class="disabled">Previous</a>
+        <% } %>
+
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="/characters?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a href="/characters?page=<%= currentPage + 1 %>">Next</a>
+        <% } else { %>
+            <a href="#" class="disabled">Next</a>
+        <% } %>
+    </div>
 
     <!-- Create New Character Button -->
     <a href="/characters/new" class="btn">Create New Character</a>

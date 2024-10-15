@@ -55,7 +55,15 @@ exports.simulateFight = async (req, res) => {
     // Log the fight
     await logFightHistory(fightResult.winner, fightResult.loser, fightResult.log, fightResult.stats);
 
-    res.render('fightResult', { title: 'Fight Result', char1, char2, fightResult });
+    // Pass the fight result, health, and fight log to the template
+    res.render('fightResult', {
+      title: 'Fight Result',
+      char1,
+      char2,
+      char1Health: fightResult.char1Health,
+      char2Health: fightResult.char2Health,
+      fightResult
+    });
   } catch (error) {
     console.error('Error during fight simulation:', error);
     res.status(500).send('Internal Server Error');
@@ -90,7 +98,14 @@ function dynamicFightSimulation(char1, char2) {
     if (char2Health <= 0) {
       fightLog.push(`${char2.name} is defeated!`);
       fightStats.totalRounds = round;
-      return { winner: char1, loser: char2, log: fightLog, stats: fightStats };
+      return {
+        winner: char1,
+        loser: char2,
+        log: fightLog,
+        stats: fightStats,
+        char1Health,
+        char2Health
+      };
     }
 
     char1Health -= char2Attack.damage;
@@ -100,13 +115,20 @@ function dynamicFightSimulation(char1, char2) {
     if (char1Health <= 0) {
       fightLog.push(`${char1.name} is defeated!`);
       fightStats.totalRounds = round;
-      return { winner: char2, loser: char1, log: fightLog, stats: fightStats };
+      return {
+        winner: char2,
+        loser: char1,
+        log: fightLog,
+        stats: fightStats,
+        char1Health,
+        char2Health
+      };
     }
 
     round++;
   }
 
-  return { result: 'It\'s a tie!', log: fightLog, stats: fightStats };
+  return { result: 'It\'s a tie!', log: fightLog, stats: fightStats, char1Health, char2Health };
 }
 
 // Calculate attack with luck and special abilities
