@@ -113,18 +113,18 @@ async function fetchAndSaveCharacter(characterId) {
       }
 
       // Wait for 2 seconds before retrying (rate limiting)
-      await delay(2000);
+      await delay(1000); // Reduced delay for faster fetching
     }
   }
 }
 
 // Fetch multiple characters with delays to avoid rate limiting
 async function fetchMultipleCharacters() {
-  const characterIds = Array.from({ length: 750 }, (_, i) => i + 1);  // Create an array of character IDs from 1 to 750
+  const characterIds = Array.from({ length: 732 }, (_, i) => i + 1);  // Create an array of character IDs from 1 to 732
 
   for (let i = 0; i < characterIds.length; i++) {
     await fetchAndSaveCharacter(characterIds[i]);  // Wait for each character to be fetched
-    await delay(1000);  // Add 1-second delay between each request
+    await delay(500);  // Reduced delay between each request for faster speed
   }
 
   console.log('All characters fetched and saved successfully.');
