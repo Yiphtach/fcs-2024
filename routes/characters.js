@@ -5,8 +5,10 @@ const characterController = require('../controllers/characterController');
 // Route to list all characters
 router.get('/', characterController.listCharacters);
 
+router.get('/characters', characterController.listCharacters);
+
 // Route to view a specific character's details
-router.get('/:id', characterController.showCharacterDetails);  // This route will handle requests for character details
+router.get('/:id', characterController.showCharacterDetails);
 
 // Middleware to validate MongoDB ObjectID for character routes with ':id'
 const validateCharacterId = (req, res, next) => {

@@ -1,5 +1,20 @@
 const Character = require('../models/character');
 
+exports.showCharacterDetails = async (req, res) => {
+  try {
+    const character = await Character.findById(req.params.id);
+    if (!character) {
+      return res.status(404).send('Character not found');
+    }
+
+    // Pass title and character to the view
+    res.render('characterDetails', { title: `${character.name} Details`, character });
+  } catch (error) {
+    console.error('Error fetching character details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 // List all characters with pagination
 exports.listCharacters = async (req, res) => {
   try {

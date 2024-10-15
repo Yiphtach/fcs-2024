@@ -10,8 +10,6 @@ const compression = require('compression'); // Added compression for better perf
 const rateLimit = require('express-rate-limit'); // Added rate limiting for security
 const dataImporter = require('./data/dataImporter'); // Import the data importer script
 
-const characterRoutes = require('./routes/characters');
-
 // Load environment variables from .env file
 dotenv.config();
 
