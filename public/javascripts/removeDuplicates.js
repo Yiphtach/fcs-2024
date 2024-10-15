@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Character = require('../models/character'); // Assuming the character model is in the models folder
+const Character = require('../../models/character'); // Assuming the character model is in the models folder
 require('dotenv').config();
 
 // Connect to MongoDB

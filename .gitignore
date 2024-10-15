@@ -1,1 +1,15 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore environment variables
 .env
+
+# Ignore error logs
+error.log
+
+# Ignore system files
+.DS_Store
+*.log
+
+# Ignore coverage reports
+coverage/
