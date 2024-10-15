@@ -3,16 +3,26 @@
 <main>
   <h1>Choose Your Character from <%= universe %></h1>
 
+  <!-- Back Button -->
+  <button onclick="goBack()" class="back-button">Go Back</button>
+
   <!-- Display character options for Character 1 -->
   <form action="/fights/simulate" method="POST">
     <div class="character-selection">
       <h2>Choose Character 1</h2>
       <% characters.forEach(character => { %>
         <div class="character-option">
-          <input type="radio" id="char1-<%= character._id %>" name="char1Id" value="<%= character._id %>" required aria-label="<%= character.name %>" onclick="storeSelectedCharacter('<%= character._id %>')">
+          <input type="radio" id="char1-<%= character._id %>" name="char1Id" value="<%= character._id %>" required aria-label="<%= character.name %>" onclick="storeSelectedCharacter('<%= character._id %>', '<%= character.name %>', '<%= character.imageUrl %>')">
           <label for="char1-<%= character._id %>"><%= character.name %></label>
         </div>
       <% }) %>
+    </div>
+
+    <!-- Selected Character 1 Display -->
+    <div id="selected-character" class="selected-character" style="display: none;">
+      <h2>Selected Character</h2>
+      <img id="selected-image" src="" alt="Selected Character" class="character-image" style="width: 150px;">
+      <p id="selected-name"></p>
     </div>
 
     <!-- Choose an opponent -->
@@ -35,24 +45,21 @@
   let selectedCharacterId = ''; // Store the selected character ID for char1
 
   // Function to store selected Character 1 and update the Character 2 dropdown
-  function storeSelectedCharacter(charId) {
+  function storeSelectedCharacter(charId, name, imageUrl) {
     selectedCharacterId = charId;
-    updateOpponentOptions();
+    displaySelectedCharacter(name, imageUrl);
   }
 
-  // Function to dynamically update the opponent selection options
-  function updateOpponentOptions() {
-    const opponentSelect = document.getElementById('char2Id');
-    const options = opponentSelect.options;
+  // Function to display the selected character's name and image
+  function displaySelectedCharacter(name, imageUrl) {
+    document.getElementById('selected-character').style.display = 'block';
+    document.getElementById('selected-name').innerText = name;
+    document.getElementById('selected-image').src = imageUrl;
+  }
 
-    // Loop through Character 2 dropdown options to disable the selected Character 1
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].value === selectedCharacterId) {
-        options[i].disabled = true; // Disable char1 from being selected as char2
-      } else {
-        options[i].disabled = false; // Enable other characters as options
-      }
-    }
+  // Function to go back to the previous page
+  function goBack() {
+    window.history.back();  // This will take the user back to the previous page
   }
 </script>
 
@@ -100,4 +107,28 @@
     border-radius: 5px;
   }
 
+  .back-button {
+    padding: 10px 20px;
+    background-color: #555;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
+  .back-button:hover {
+    background-color: #333;
+  }
+
+  .selected-character {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .character-image {
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
 </style>

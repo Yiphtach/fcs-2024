@@ -19,6 +19,9 @@ const validateFightInput = (req, res, next) => {
     next();
 };
 
+// Route to display character gallery
+router.get('/gallery', fightController.showCharacterGallery);
+
 // Route to display universe selection page
 router.get('/setup', fightController.showFightSetup);
 

@@ -12,6 +12,17 @@ exports.showFightSetup = async (req, res) => {
   }
 };
 
+// Display the character gallery for fight selection
+exports.showCharacterGallery = async (req, res) => {
+  try {
+    const characters = await Character.find({});  // Fetch all characters
+    res.render('gallery', { title: 'Character Gallery', characters });
+  } catch (error) {
+    console.error('Error fetching characters for gallery:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 // Show character selection after universe selection
 exports.showCharacterSelection = async (req, res) => {
   try {
