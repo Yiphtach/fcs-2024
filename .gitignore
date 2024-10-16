@@ -1,5 +1,5 @@
 # Ignore node_modules
-node_modules/
+node_modules
 
 # Ignore environment variables
 .env
@@ -12,4 +12,4 @@ error.log
 *.log
 
 # Ignore coverage reports
-coverage/
+coverage

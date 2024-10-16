@@ -19,7 +19,7 @@ const app = express();
 // Set the port from environment variable or default to 3000
 const port = process.env.PORT || 3000;
 
-// MongoDB connection without `useNewUrlParser` and `useUnifiedTopology`
+// MongoDB connection without
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log(`Connected to MongoDB ${mongoose.connection.name}.`))
   .catch(err => {
