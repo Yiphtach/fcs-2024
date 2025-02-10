@@ -1,5 +1,6 @@
 const Character = require('../models/characterModel');
 const Fight = require('../models/fightModel');  // Assuming you've created a Fight model for logging fight history
+const leaderboardController = require('../controllers/leaderboardController');
 
 // Display fight setup form (Choose Universe)
 exports.showFightSetup = async (req, res) => {
@@ -194,3 +195,5 @@ async function logFightHistory(winner, loser, log, fightStats) {
     console.error('Error logging fight history:', error);
   }
 }
+
+await leaderboardController.updateCharacterRecords(winner._id, loser._id);

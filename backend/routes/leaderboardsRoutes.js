@@ -3,6 +3,12 @@ const router = express.Router();
 const Character = require('../models/characterModel');
 const leaderboardController = require('../controllers/leaderboardController');
 
+// 🏆 GET: Retrieve the leaderboard (top 10 ranked characters)
+router.get('/', leaderboardController.getLeaderboard);
+
+// 📊 GET: Retrieve win/loss stats for a specific character
+router.get('/:id', leaderboardController.getCharacterStats);
+
 // Route for the leaderboard page
 router.get('/leaderboard', leaderboardController.showLeaderboard);
 

@@ -1,5 +1,71 @@
 const Character = require('../models/characterModel');
 
+// 🎖 Get Top Ranked Characters
+exports.getLeaderboard = async (req, res) => {
+  try {
+      const topCharacters = await Character.find()
+          .sort({ wins: -1, totalFights: -1 }) // Sort by most wins, then by total fights
+          .limit(10); // Retrieve the top 10 fighters
+
+      res.json({ message: "Leaderboard retrieved successfully!", leaderboard: topCharacters });
+  } catch (error) {
+      console.error('Error retrieving leaderboard:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// 📈 Get Win/Loss Ratio of a Specific Character
+exports.getCharacterStats = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const character = await Character.findById(id);
+
+      if (!character) {
+          return res.status(404).json({ error: 'Character not found.' });
+      }
+
+      res.json({
+          name: character.name,
+          wins: character.wins,
+          losses: character.losses,
+          totalFights: character.totalFights,
+          winRatio: character.winRatio,
+          lossRatio: character.lossRatio
+      });
+
+  } catch (error) {
+      console.error('Error fetching character stats:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// 🔄 Update Leaderboard Stats After a Fight
+exports.updateCharacterRecords = async (winnerId, loserId) => {
+  try {
+      const winner = await Character.findById(winnerId);
+      const loser = await Character.findById(loserId);
+
+      if (!winner || !loser) {
+          console.log("One or both characters not found, skipping leaderboard update.");
+          return;
+      }
+
+      // Update records
+      winner.wins += 1;
+      winner.totalFights += 1;
+      await winner.save();
+
+      loser.losses += 1;
+      loser.totalFights += 1;
+      await loser.save();
+
+      console.log(`✅ Leaderboard updated: ${winner.name} wins, ${loser.name} loses.`);
+  } catch (error) {
+      console.error('Error updating character records:', error);
+  }
+};
+
+
 // Display leaderboard: characters ranked by wins, then by win ratio
 exports.showLeaderboard = async (req, res) => {
   try {
