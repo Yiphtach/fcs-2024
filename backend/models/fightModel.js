@@ -1,3 +1,4 @@
+//Defines how fight history is stored in MongoDB
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 

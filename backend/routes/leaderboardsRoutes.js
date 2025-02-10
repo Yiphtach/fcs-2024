@@ -1,3 +1,5 @@
+//Defines API endpoints for retrieving and updating leaderboard data.
+
 const express = require('express');
 const router = express.Router();
 const Character = require('../models/characterModel');

@@ -1,3 +1,5 @@
+//Handles updating scores and rankings after fights.
+
 const Character = require('../models/characterModel');
 
 // 🎖 Get Top Ranked Characters
