@@ -12,7 +12,8 @@ const rateLimit = require('express-rate-limit'); // Added rate limiting for secu
 const dataImporter = require('./backend/data/dataImporter'); // Import the data importer script
 
 const { connectDB } = require ("./backend/config/db.js");
-
+const Character = require('./backend/models/characterModel.js');
+const Fights = require('./backend/models/fightModel');
 
 // Initialize Express App
 const app = express();
@@ -46,17 +47,15 @@ app.use(morgan('dev')); // Logger for requests
 app.use(methodOverride('_method')); // Support method override for PUT & DELETE
 
 // Routes
-const characterRoutes = require('./backend/routes/characterRoutes');
-const fightRoutes = require('./backend/routes/fightRoutes');
-const leaderboardRoutes = require('./backend/routes/leaderboardsRoutes');
+const charactersRoutes = require('./backend/routes/charactersRoutes.js');
+const fightsRoutes = require('./backend/routes/fightsRoutes.js');
+const leaderboardsRoutes = require('./backend/routes/leaderboardsRoutes');
 const superheroAPIRoutes = require('./backend/routes/superheroAPI');
-const character = require('./backend/models/characterModel.js');
 
-
-app.use('/api/charactersRoutes', characterRoutes);
-app.use('/api/characters', characterRoutes);
-app.use('/api/fights', fightRoutes);
-app.use('/api/leaderboards', leaderboardRoutes);
+app.use('/api/charactersRoutes', charactersRoutes);
+app.use('/api/characters', charactersRoutes);
+app.use('/api/fights', fightsRoutes);
+app.use('/api/leaderboards', leaderboardsRoutes);
 app.use('/api/superhero', superheroAPIRoutes);  // For Superhero API Fetching
 
 // Root Route
