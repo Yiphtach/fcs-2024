@@ -109,3 +109,54 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   connectDB();
 });
+
+
+
+
+
+
+
+fcs-2024/
+│
+├── backend/                     # Backend (Express server)
+│   ├── controllers/             # Controller files (handling business logic)
+│   │   ├── characterController.js   # Character-related logic
+│   │   ├── fightController.js       # Fight-related logic
+│   │   ├── leaderboardController.js # Leaderboard-related logic
+│   │
+│   ├── models/                  # Mongoose models
+│   │   ├── character.js         # Character model
+│   │   ├── fight.js             # Fight model (for storing fight history)
+│   │
+│   ├── routes/                  # Express route files
+│   │   ├── characterRoutes.js        # Routes related to character actions
+│   │   ├── fightRoutes.js            # Routes related to fight setup and simulation
+│   │   ├── leaderboardsRoutes.js      # Routes related to leaderboard
+│   │   
+│   │
+│   ├── config/                  # Configuration files
+│   │   ├── db.js                # MongoDB connection configuration
+│   │
+│   ├── utils/                   # Utility scripts
+│   │   ├── apiFetcher.js        # Server-side API fetching logic
+│   │   └── utils.js             # General utility functions
+│   │
+│   ├── data/                    # Data importers and utilities
+│   │   └── dataImporter.js      # Script for importing character data
+│   │
+│   ├── .gitignore               # Ignore unnecessary files in Git
+│   ├── error.log                # Log file for application errors
+│   ├── .env                     # Environment variables (e.g., API keys, DB URI)
+│   ├── app.js                   # Main Express app file
+│   ├── package.json             # npm package configuration
+│   ├── package-lock.json        # npm dependency lock file
+│   ├── index.js             # Routes for the home page and other main pages
+│   └── README.md                # Documentation for the app
+
+
+
+
+
+
+
+
