@@ -49,10 +49,15 @@ app.use(methodOverride('_method')); // Support method override for PUT & DELETE
 const characterRoutes = require('./backend/routes/characterRoutes');
 const fightRoutes = require('./backend/routes/fightRoutes');
 const leaderboardRoutes = require('./backend/routes/leaderboardsRoutes');
+const superheroAPIRoutes = require('./backend/routes/superheroAPI');
+const character = require('./backend/models/characterModel.js');
+
 
 app.use('/api/charactersRoutes', characterRoutes);
+app.use('/api/characters', characterRoutes);
 app.use('/api/fights', fightRoutes);
 app.use('/api/leaderboards', leaderboardRoutes);
+app.use('/api/superhero', superheroAPIRoutes);  // For Superhero API Fetching
 
 // Root Route
 app.get('/', (req, res) => {

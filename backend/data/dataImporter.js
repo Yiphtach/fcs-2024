@@ -1,6 +1,6 @@
 const axios = require('axios');
 const mongoose = require('mongoose');
-const Character = require('../models/character');
+const Character = require('../models/characterModel');
 require('dotenv').config();
 const fs = require('fs'); // For logging errors
 

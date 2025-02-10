@@ -1,5 +1,5 @@
-const Character = require('../models/character');
-const Fight = require('../models/fight');  // Assuming you've created a Fight model for logging fight history
+const Character = require('../models/characterModel');
+const Fight = require('../models/fightModels');  // Assuming you've created a Fight model for logging fight history
 
 // Display fight setup form (Choose Universe)
 exports.showFightSetup = async (req, res) => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Character = require('../models/character');
+const Character = require('../models/characterModel');
 const leaderboardController = require('../controllers/leaderboardController');
 
 // Route for the leaderboard page
