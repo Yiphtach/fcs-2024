@@ -1,4 +1,5 @@
 // app.js
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -8,10 +9,12 @@ const cron = require('node-cron');
 const helmet = require('helmet'); // Added Helmet for security enhancements
 const compression = require('compression'); // Added compression for better performance
 const rateLimit = require('express-rate-limit'); // Added rate limiting for security
-const dataImporter = require('./data/dataImporter'); // Import the data importer script
+const dataImporter = require('./backend/data/dataImporter'); // Import the data importer script
+
+const { connectDB } = require ("./backend/config/db.js");
 
 // Load environment variables from .env file
-dotenv.config();
+
 
 // Initialize the app
 const app = express();
@@ -26,6 +29,8 @@ mongoose.connect(process.env.MONGODB_URI)
     console.error(`Connection error: ${err}`);
     process.exit(1); // Exit the app if database connection fails
   });
+
+  console.log('MongoDB URI: ', process.env.MONGODB_URI);
 
 // MongoDB Connection Event Handlers
 mongoose.connection.on("connected", () => {
@@ -63,16 +68,18 @@ app.use(methodOverride('_method'));
 app.set('view engine', 'ejs');
 
 // Routes (import your routes as needed)
-const indexRoutes = require('./routes/index');
-const characterRoutes = require('./routes/characters');
-const fightRoutes = require('./routes/fights');
-const leaderboardsRoutes = require('./routes/leaderboards');
+const indexRoutes = require('./index');
+const characterRoutes = require('./backend/routes/characterRoutes');
+const fightRoutes = require('./backend/routes/fightRoutes');
+const leaderboardsRoutes = require('./backend/routes/leaderboardsRoutes');
 
 // Apply Routes
 app.use('/', indexRoutes);
 app.use('/characters', characterRoutes);
 app.use('/fights', fightRoutes);
 app.use('/leaderboards', leaderboardsRoutes);
+
+connectDB();
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -100,4 +107,5 @@ app.use((req, res) => {
 const PORT = port;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  connectDB();
 });
