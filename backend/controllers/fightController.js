@@ -1,62 +1,92 @@
-const mongoose = require('mongoose');
 const Character = require('../models/characterModel');
-const Fight = require('../models/fightModel');
+const Fight = require('../models/fightModel'); 
 const leaderboardController = require('../controllers/leaderboardController');
+const mongoose = require('mongoose');
 
-// ✅ Simulate a Fight
+// Display fight setup form (Choose Universe)
+exports.showFightSetup = async (req, res) => {
+  try {
+    const universes = ['Marvel', 'DC', 'Other'];  // Universes to choose from
+    res.render('fightSetup', { universes, title: 'Choose Your Universe' });
+  } catch (error) {
+    console.error('Error fetching universes:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Display the character gallery for fight selection
+exports.showCharacterGallery = async (req, res) => {
+  try {
+    const characters = await Character.find({});  // Fetch all characters
+    res.render('gallery', { title: 'Character Gallery', characters });
+  } catch (error) {
+    console.error('Error fetching characters for gallery:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Show character selection after universe selection
+exports.showCharacterSelection = async (req, res) => {
+  try {
+    const { universe } = req.query;  // Get the selected universe from the query string
+    const characters = await Character.find({ universe });  // Fetch characters from the selected universe
+    res.render('characterSelection', { characters, universe, title: 'Choose Your Character' });
+  } catch (error) {
+    console.error('Error fetching characters:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Simulate a fight between two characters
 exports.simulateFight = async (req, res) => {
   try {
     const { char1Id, char2Id } = req.body;
 
-    // ✅ Validate character selection
+    // Validate character selection
     if (!char1Id || !char2Id) {
-      return res.status(400).json({ error: 'Missing character IDs.' });
+      return res.status(400).send('Bad Request: Missing character IDs.');
     }
 
-    // ✅ Validate MongoDB ObjectIDs
-    if (!mongoose.Types.ObjectId.isValid(char1Id) || !mongoose.Types.ObjectId.isValid(char2Id)) {
-      return res.status(400).json({ error: 'Invalid Character IDs.' });
+    // Check for valid MongoDB ObjectIDs
+    if (!char1Id.match(/^[0-9a-fA-F]{24}$/) || !char2Id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).send('Bad Request: Invalid Character IDs.');
     }
 
     const char1 = await Character.findById(char1Id);
     const char2 = await Character.findById(char2Id);
 
     if (!char1 || !char2) {
-      return res.status(404).json({ error: 'One or both characters not found.' });
+      return res.status(404).send('Character not found.');
     }
 
-    // ✅ Simulate the fight
+    // Simulate the fight
     const fightResult = dynamicFightSimulation(char1, char2);
 
-    if (!fightResult.winner || !fightResult.loser) {
-      return res.status(200).json({ message: "It's a tie!", fightLog: fightResult.log });
-    }
-
-    // ✅ Update character stats
+    // Update character stats
     await updateCharacterStats(fightResult.winner, fightResult.loser);
 
-    // ✅ Log the fight
+    // Log the fight
     await logFightHistory(fightResult.winner, fightResult.loser, fightResult.log, fightResult.stats);
 
     // ✅ Update leaderboard
     await leaderboardController.updateCharacterRecords(fightResult.winner._id, fightResult.loser._id);
 
-    // ✅ Return the fight result
-    res.json({
-      message: `${fightResult.winner.name} won the fight!`,
-      fightLog: fightResult.log,
-      fightStats: fightResult.stats,
-      winner: fightResult.winner.name,
-      loser: fightResult.loser.name
+    // Pass the fight result, health, and fight log to the template
+    res.render('fightResult', {
+      title: 'Fight Result',
+      char1,
+      char2,
+      char1Health: fightResult.char1Health,
+      char2Health: fightResult.char2Health,
+      fightResult
     });
-
   } catch (error) {
     console.error('Error during fight simulation:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).send('Internal Server Error');
   }
 };
 
-// ✅ Dynamic Fight Simulation Logic
+// Dynamic fight simulation logic with balancing and luck
 function dynamicFightSimulation(char1, char2) {
   let char1Health = 100;
   let char2Health = 100;
@@ -69,8 +99,8 @@ function dynamicFightSimulation(char1, char2) {
     loserDamageDealt: 0,
     winnerSpecialMoveUsed: '',
     loserSpecialMoveUsed: '',
-    winnerLuckFactor: Math.floor(Math.random() * 5) + 1, // Random 1-5
-    loserLuckFactor: Math.floor(Math.random() * 5) + 1,
+    winnerLuckFactor: 1,
+    loserLuckFactor: 1,
   };
 
   while (char1Health > 0 && char2Health > 0) {
@@ -78,44 +108,59 @@ function dynamicFightSimulation(char1, char2) {
     const char2Attack = calculateAttack(char2, char1);
 
     char2Health -= char1Attack.damage;
+    fightLog.push(`Round ${round}: ${char1.name} attacks with ${char1Attack.move}, causing ${char1Attack.damage} damage.`);
     fightStats.winnerDamageDealt += char1Attack.damage;
-    fightLog.push(`Round ${round}: ${char1.name} uses ${char1Attack.move}, dealing ${char1Attack.damage} damage.`);
 
     if (char2Health <= 0) {
-      fightLog.push(`${char2.name} is knocked out!`);
+      fightLog.push(`${char2.name} is defeated!`);
       fightStats.totalRounds = round;
-      return { winner: char1, loser: char2, log: fightLog, stats: fightStats };
+      return {
+        winner: char1,
+        loser: char2,
+        log: fightLog,
+        stats: fightStats,
+        char1Health,
+        char2Health
+      };
     }
 
     char1Health -= char2Attack.damage;
+    fightLog.push(`Round ${round}: ${char2.name} counters with ${char2Attack.move}, causing ${char2Attack.damage} damage.`);
     fightStats.loserDamageDealt += char2Attack.damage;
-    fightLog.push(`Round ${round}: ${char2.name} counters with ${char2Attack.move}, dealing ${char2Attack.damage} damage.`);
 
     if (char1Health <= 0) {
-      fightLog.push(`${char1.name} is knocked out!`);
+      fightLog.push(`${char1.name} is defeated!`);
       fightStats.totalRounds = round;
-      return { winner: char2, loser: char1, log: fightLog, stats: fightStats };
+      return {
+        winner: char2,
+        loser: char1,
+        log: fightLog,
+        stats: fightStats,
+        char1Health,
+        char2Health
+      };
     }
 
     round++;
   }
 
-  return { result: 'It\'s a tie!', log: fightLog, stats: fightStats };
+  return { result: 'It\'s a tie!', log: fightLog, stats: fightStats, char1Health, char2Health };
 }
 
-// ✅ Calculate Attack with Randomized Factors
+// Calculate attack with luck and special abilities
 function calculateAttack(attacker, defender) {
-  const attackStrength = attacker.stats.strength * (Math.random() + 0.5);
+  const attackStrength = attacker.stats.strength * Math.random();
   const defense = defender.stats.durability * Math.random();
 
-  const agilityAdvantage = attacker.stats.speed > defender.stats.speed ? 1.2 : 0.8;
   const luckFactor = Math.random() > 0.5 ? 1.2 : 0.8;
-  const isCriticalHit = Math.random() < (attacker.stats.intelligence / 100);
+  const agilityAdvantage = attacker.stats.speed > defender.stats.speed ? 1.2 : 0.8;
 
-  const move = isCriticalHit ? 'Critical Strike' : attacker.specialAbility || 'Basic Attack';
+  const isCriticalHit = Math.random() < (attacker.stats.intelligence / 100);
+  const move = isCriticalHit ? 'Critical Hit' : attacker.specialAbility || 'Normal Attack';
+
   const damage = Math.max((attackStrength * agilityAdvantage * luckFactor) - defense, 0);
 
-  return { move, damage: Math.round(damage) };
+  return { move, damage };
 }
 
 // ✅ Update Character Stats After a Fight
@@ -140,7 +185,7 @@ async function updateCharacterStats(winner, loser) {
   }
 }
 
-// ✅ Log Fight History
+// Log fight history
 async function logFightHistory(winner, loser, log, fightStats) {
   try {
     const fight = new Fight({
@@ -150,16 +195,15 @@ async function logFightHistory(winner, loser, log, fightStats) {
       totalRounds: fightStats.totalRounds,
       winnerDamageDealt: fightStats.winnerDamageDealt,
       loserDamageDealt: fightStats.loserDamageDealt,
-      winnerSpecialMoveUsed: fightStats.winnerSpecialMoveUsed || 'None',
-      loserSpecialMoveUsed: fightStats.loserSpecialMoveUsed || 'None',
+      winnerSpecialMoveUsed: fightStats.winnerSpecialMoveUsed || '',
+      loserSpecialMoveUsed: fightStats.loserSpecialMoveUsed || '',
       winnerLuckFactor: fightStats.winnerLuckFactor || 1,
       loserLuckFactor: fightStats.loserLuckFactor || 1,
       date: new Date(),
     });
-
     await fight.save();
-    console.log(`✅ Fight logged: ${winner.name} vs ${loser.name}`);
+    console.log(`Fight logged: ${winner.name} vs ${loser.name}`);
   } catch (error) {
-    console.error('❌ Error logging fight history:', error);
+    console.error('Error logging fight history:', error);
   }
 }

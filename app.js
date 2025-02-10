@@ -46,13 +46,13 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Routes
-const charactersRoutes = require('./backend/routes/charactersRoutes');
+const characterRoutes = require('./backend/routes/charactersRoutes');
 const fightRoutes = require('./backend/routes/fightsRoutes');
 const leaderboardsRoutes = require('./backend/routes/leaderboardsRoutes');
 const leaderboardRoutes = require('./backend/routes/leaderboardsRoutes');
 const superheroAPIRoutes = require('./backend/routes/superheroAPI');
 
-app.use('/api/characters', charactersRoutes);
+app.use('/api/characters', characterRoutes);
 app.use('/api/fights', fightRoutes);
 app.use('/api/leaderboards', leaderboardsRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
