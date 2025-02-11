@@ -1,0 +1,28 @@
+{
+    "fightLogs": [
+        {
+            "id": "1",
+            "timestamp": "2024-01-20T10:30:00Z",
+            "fighter1": {
+                "id": "f101",
+                "name": "John Doe",
+                "status": "winner"
+            },
+            "fighter2": {
+                "id": "f102",
+                "name": "Jane Smith",
+                "status": "loser"
+            },
+            "matchDetails": {
+                "duration": "2:30",
+                "rounds": 1,
+                "winMethod": "knockout",
+                "venue": "Arena 1"
+            }
+        }
+    ],
+    "metadata": {
+        "lastUpdated": "2024-01-20T10:30:00Z",
+        "totalFights": 1
+    }
+}
