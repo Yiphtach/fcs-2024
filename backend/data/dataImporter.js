@@ -51,7 +51,7 @@ function processAbilities(abilitiesData) {
 
 // Function to fetch and save character data with retry logic and delay
 async function fetchAndSaveCharacter(characterId) {
-  const maxRetries = 3; // Set maximum retry attempts
+  const maxRetries = 0; // Set maximum retry attempts
   let attempt = 0;
 
   while (attempt < maxRetries) {
