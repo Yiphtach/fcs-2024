@@ -35,91 +35,91 @@ async function fetchSuperheroData(url, retries = MAX_RETRIES) {
     }
 }
 
-// 🔍 Search for a Character by Name
-router.get('/search/:name', async (req, res) => {
-    try {
-        const { name } = req.params;
-        const data = await fetchSuperheroData(`${API_BASE_URL}/search/${name}`);
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching character data' });
-    }
-});
-
-// 🔹 Get Character Details by ID
+// Get full character info by ID
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const data = await fetchSuperheroData(`${API_BASE_URL}/${id}`);
-        res.json(data);
+        const response = await axios.get(`${BASE_URL}/${id}`);
+        res.json(response.data);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching character data' });
     }
 });
 
-// 📊 Get Character Powerstats
+// Get powerstats of character by ID
 router.get('/:id/powerstats', async (req, res) => {
     try {
         const { id } = req.params;
-        const data = await fetchSuperheroData(`${API_BASE_URL}/${id}/powerstats`);
-        res.json(data);
+        const response = await axios.get(`${BASE_URL}/${id}/powerstats`);
+        res.json(response.data);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching powerstats' });
     }
 });
 
-// 📜 Get Character Biography
+// Get biography of character by ID
 router.get('/:id/biography', async (req, res) => {
     try {
         const { id } = req.params;
-        const data = await fetchSuperheroData(`${API_BASE_URL}/${id}/biography`);
-        res.json(data);
+        const response = await axios.get(`${BASE_URL}/${id}/biography`);
+        res.json(response.data);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching biography' });
     }
 });
 
-// 🎭 Get Character Appearance
+// Get appearance of character by ID
 router.get('/:id/appearance', async (req, res) => {
     try {
         const { id } = req.params;
-        const data = await fetchSuperheroData(`${API_BASE_URL}/${id}/appearance`);
-        res.json(data);
+        const response = await axios.get(`${BASE_URL}/${id}/appearance`);
+        res.json(response.data);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching appearance' });
+        res.status(500).json({ error: 'Error fetching appearance data' });
     }
 });
 
-// 🏢 Get Character Work (Occupation & Base)
+// Get work details of character by ID
 router.get('/:id/work', async (req, res) => {
     try {
         const { id } = req.params;
-        const data = await fetchSuperheroData(`${API_BASE_URL}/${id}/work`);
-        res.json(data);
+        const response = await axios.get(`${BASE_URL}/${id}/work`);
+        res.json(response.data);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching work details' });
+        res.status(500).json({ error: 'Error fetching work data' });
     }
 });
 
-// 🔗 Get Character Connections
+// Get connections of character by ID
 router.get('/:id/connections', async (req, res) => {
     try {
         const { id } = req.params;
-        const data = await fetchSuperheroData(`${API_BASE_URL}/${id}/connections`);
-        res.json(data);
+        const response = await axios.get(`${BASE_URL}/${id}/connections`);
+        res.json(response.data);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching connections' });
+        res.status(500).json({ error: 'Error fetching connections data' });
     }
 });
 
-// 🖼️ Get Character Image
+// Get image URL of character by ID
 router.get('/:id/image', async (req, res) => {
     try {
         const { id } = req.params;
-        const data = await fetchSuperheroData(`${API_BASE_URL}/${id}/image`);
-        res.json(data);
+        const response = await axios.get(`${BASE_URL}/${id}/image`);
+        res.json(response.data);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching image' });
+        res.status(500).json({ error: 'Error fetching image data' });
+    }
+});
+
+// Search character by name
+router.get('/search/:name', async (req, res) => {
+    try {
+        const { name } = req.params;
+        const response = await axios.get(`${BASE_URL}/search/${name}`);
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: 'Error searching for character' });
     }
 });
 
